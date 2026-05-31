@@ -975,7 +975,7 @@ function toggleTheme() {
 // ─────────────────────────────────────────────────────────────
 // YASAKLI KELİMELER
 // ─────────────────────────────────────────────────────────────
-const BANNED_WORDS = ['salak','aptal','gerizekalı','hakaret','küfür','mal','orospu','bok','sik','piç','pic','amk','lanet','kahpe','ibne','göt',,'beyinsiz','dangalak'];
+const BANNED_WORDS = ['salak','aptal','gerizekalı','hakaret','küfür','mal','orospu','bok','sik','piç','pic','amk','lanet','kahpe','ibne','göt','beyinsiz','dangalak'];
 function checkBanned(text) { const low = text.toLowerCase(); return BANNED_WORDS.find(w => low.includes(w)) || null; }
 
 // ─────────────────────────────────────────────────────────────
@@ -1641,10 +1641,20 @@ function buildDashAdmin() {
 
   const pendingFaults = fa.filter(f => f.status !== 'Çözüldü').length;
 
-  const fullyPaidUsers = res.filter(r => {
-    const userDues = siteDues.filter(d => d.userId === r.id);
-    return userDues.length > 0 && userDues.every(d => d.status === 'paid');
-  }).length;
+  const currentMonth = new Date().getMonth() + 1;
+
+const fullyPaidUsers = res.filter(r => {
+  const joinedMonth = r.moveInMonth || 1;
+
+  const activeDues = siteDues.filter(d =>
+    d.userId === r.id &&
+    d.month >= joinedMonth &&
+    d.month <= currentMonth
+  );
+
+  return activeDues.length > 0 &&
+         activeDues.every(d => d.status === 'paid');
+}).length;
 
   const stats = [
     {v: res.length, l: L('totalRes'), c:'#06b6d4', bg:'rgba(6,182,212,.11)', ic:'bi-people'},
@@ -1737,27 +1747,6 @@ document.getElementById('dashCharts').innerHTML =
       }
     });
 
-    new Chart(document.getElementById('achart'), {
-      type: 'bar',
-      data: {
-        labels: aC.map(a => a.n),
-        datasets: [{
-          data: aC.map(a => a.p),
-          backgroundColor: 'rgba(99,102,241,.65)',
-          borderRadius: 7,
-          borderSkipped: false
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: {ticks: {color: tc}, grid: {color: gc}},
-          y: {ticks: {color: tc}, grid: {color: gc}, max: 12}
-        },
-        plugins: {legend: {display: false}}
-      }
-    });
   }, 120);
 
   document.getElementById('dashQuick').innerHTML =
@@ -1772,18 +1761,6 @@ document.getElementById('dashCharts').innerHTML =
       ).join('') +
     '</div>' +
   '</div>';
-    fa.slice(0, 4).map(f =>
-      '<div style="display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--b1);">' +
-      '<div style="width:34px;height:34px;border-radius:9px;background:rgba(244,63,94,.09);display:flex;align-items:center;justify-content:center;"><i class="bi bi-tools" style="color:var(--no);font-size:13px;"></i></div>' +
-      '<div style="flex:1;"><div style="font-size:13px;font-weight:600;">' + f.type + '</div><div style="font-size:11px;color:var(--t3);">' + f.userName + '</div></div>' +
-      '<span class="bx ' + SB(f.status) + '">' + LS(f.status) + '</span></div>'
-    ).join('') +
-    '</div></div>' +
-    '<div class="col-md-6"><div class="gc"><div class="sec-t"><i class="bi bi-megaphone" style="color:var(--ib);"></i>' + L('recentAnn') + '</div>' +
-    an.slice(0, 4).map(a =>
-      '<div style="padding:11px 0;border-bottom:1px solid var(--b1);"><div style="font-size:13px;font-weight:600;">' + a.title + '</div><div style="font-size:11px;color:var(--t3);margin-top:2px;">' + a.date + ' · ' + a.cat + '</div></div>'
-    ).join('') +
-    '</div></div>';
 }
 function buildDashRes() {
   const s = mySite();
@@ -1820,7 +1797,7 @@ const unpaidDues = responsibleDues.filter(d => d.status !== 'paid');
     '<div class="col-12"><div class="gc"><div class="sec-t"><i class="bi bi-calendar-check" style="color:var(--ok);"></i>' + L('aidatOverview') + '</div>' +
     '<div class="row g-2">' + MONTHS.map((m, i) => {
   const monthNo = i + 1;
-  const currentMonth = 5;
+  const currentMonth = new Date().getMonth() + 1;
 
   if (monthNo > currentMonth) {
     return '<div class="col-md-1 col-3"><div class="mt" style="opacity:.45;background:rgba(107,114,128,.15);border:1px solid rgba(107,114,128,.2);color:#9ca3af;">' +
@@ -2541,7 +2518,14 @@ function goPayment(selectedDueId = null) {
   goPage('pay');
 
   const dues = window._backendDues || [];
-  const unpaidDues = dues.filter(d => d.status !== 'paid');
+  const joinedMonth = CU.moveInMonth || 1;
+const currentMonth = new Date().getMonth() + 1;
+
+const unpaidDues = dues.filter(d =>
+  d.status !== 'paid' &&
+  d.month >= joinedMonth &&
+  d.month <= currentMonth
+);
 
   const payDues = selectedDueId
     ? unpaidDues.filter(d => d.id === selectedDueId)
@@ -2586,7 +2570,14 @@ async function doPay() {
     return;
   }
 
-  const unpaidDues = window._paymentDues || (window._backendDues || []).filter(d => d.status !== 'paid');
+  const joinedMonth = CU.moveInMonth || 1;
+const currentMonth = new Date().getMonth() + 1;
+
+const unpaidDues = window._paymentDues || (window._backendDues || []).filter(d =>
+  d.status !== 'paid' &&
+  d.month >= joinedMonth &&
+  d.month <= currentMonth
+);
 
   if (unpaidDues.length === 0) {
     toast('Ödenecek borç bulunmuyor', 'w');
@@ -2634,9 +2625,17 @@ console.log("mySiteRes:", mySiteRes());
 const rows = residents.map(r => {
   const userDues = dues.filter(d => d.userId === r.id);
 
-  const totalDebt = userDues
-    .filter(d => d.status !== 'paid')
-    .reduce((sum, d) => sum + Number(d.remainingAmount || 0), 0);
+  const joinedMonth = r.moveInMonth || 1;
+const currentMonth = new Date().getMonth() + 1;
+
+const activeDues = userDues.filter(d =>
+  d.month >= joinedMonth &&
+  d.month <= currentMonth
+);
+
+const totalDebt = activeDues
+  .filter(d => d.status !== 'paid')
+  .reduce((sum, d) => sum + Number(d.remainingAmount || 0), 0);
 
   const debtBadge = totalDebt > 0
     ? '<span class="bx bx-no">' + totalDebt.toFixed(0) + ' ₺ Borç</span>'
@@ -2665,17 +2664,58 @@ const rows = residents.map(r => {
   '</tr>';
 }).join('');
 
+const currentMonth = new Date().getMonth() + 1;
+
+const fullPaidCount = mySiteRes().filter(r => {
+  const joinedMonth = r.moveInMonth || 1;
+
+  const activeDues = dues.filter(d =>
+    d.userId === r.id &&
+    d.month >= joinedMonth &&
+    d.month <= currentMonth
+  );
+
+  return activeDues.length > 0 &&
+         activeDues.every(d => d.status === 'paid');
+}).length;
+
+const debtResidentCount = mySiteRes().filter(r => {
+  const joinedMonth = r.moveInMonth || 1;
+
+  return dues.some(d =>
+    d.userId === r.id &&
+    d.status !== 'paid' &&
+    d.month >= joinedMonth &&
+    d.month <= currentMonth
+  );
+}).length;
+
+const totalDebtAll = mySiteRes().reduce((sum, r) => {
+  const joinedMonth = r.moveInMonth || 1;
+
+  const userDebt = dues
+    .filter(d =>
+      d.userId === r.id &&
+      d.status !== 'paid' &&
+      d.month >= joinedMonth &&
+      d.month <= currentMonth
+    )
+    .reduce((s, d) => s + Number(d.remainingAmount || 0), 0);
+
+  return sum + userDebt;
+}, 0);
+
   document.getElementById('residentsAdmin').innerHTML =
     '<div class="row g-3 mb-3">' +
       '<div class="col-md-3 col-6"><div class="sc"><div class="sc-val" style="color:var(--ic);">' + mySiteRes().length + '</div><div class="sc-lbl">Toplam Sakin</div></div></div>' +
       '<div class="col-md-3 col-6"><div class="sc"><div class="sc-val" style="color:var(--ok);">' +
-        mySiteRes().filter(r => (dues.filter(d => d.userId === r.id && d.status === 'paid').length) === 12).length +
+        fullPaidCount +
       '</div><div class="sc-lbl">Tam Ödeyen</div></div></div>' +
       '<div class="col-md-3 col-6"><div class="sc"><div class="sc-val" style="color:var(--no);">' +
-        mySiteRes().filter(r => dues.some(d => d.userId === r.id && d.status !== 'paid')).length +
+        debtResidentCount +
       '</div><div class="sc-lbl">Borçlu Sakin</div></div></div>' +
       '<div class="col-md-3 col-6"><div class="sc"><div class="sc-val" style="color:var(--warn);">' +
-        dues.filter(d => d.status !== 'paid').reduce((sum, d) => sum + Number(d.remainingAmount || 0), 0).toFixed(0) + ' ₺' +
+        totalDebtAll.toFixed(0) + ' ₺' +
       '</div><div class="sc-lbl">Toplam Borç</div></div></div>' +
     '</div>' +
 
