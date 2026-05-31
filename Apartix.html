@@ -1169,18 +1169,30 @@ async function loadFaults() {
     const res = await fetch(`http://localhost:8080/api/faults?siteId=${CU.siteId}`);
     const data = await res.json();
 
-    faults = data.map(f => ({
-      id: f.id,
-      siteId: f.siteId,
-      type: f.title,
-      desc: f.description,
-      date: f.createdAt ? f.createdAt.substring(0, 10) : '',
-      userId: f.userId,
-      userName: 'Sakin',
-      priority: 'Orta',
-      status: f.status === 'open' ? 'Beklemede' :
-              f.status === 'in_progress' ? 'İşlemde' : 'Çözüldü'
-    }));
+    faults = data.map(f => {
+  const faultUser = users.find(u => u.id === f.userId);
+
+  return {
+    id: f.id,
+    siteId: f.siteId,
+    type: f.title,
+    desc: f.description,
+    date: f.createdAt
+  ? new Date(f.createdAt).toLocaleDateString('tr-TR')
+  : '',
+
+time: f.createdAt
+  ? new Date(f.createdAt).toLocaleTimeString('tr-TR')
+  : '',
+    userId: f.userId,
+    userName: faultUser ? faultUser.name : 'Sakin',
+    userApartment: faultUser ? faultUser.daire : '-',
+    
+    priority: 'Orta',
+    status: f.status === 'open' ? 'Beklemede' :
+            f.status === 'in_progress' ? 'İşlemde' : 'Çözüldü'
+  };
+});
 
   } catch (error) {
     console.error(error);
@@ -1581,12 +1593,16 @@ function goPage(name) {
   }
 
   if (name === 'fault-admin') {
-    loadFaults().then(() => renderFaultAdmin());
-  }
+  loadUsers()
+    .then(() => loadFaults())
+    .then(() => renderFaultAdmin());
+}
 
-  if (name === 'fault-sakin') {
-    loadFaults().then(() => renderFaultRes());
-  }
+if (name === 'fault-sakin') {
+  loadUsers()
+    .then(() => loadFaults())
+    .then(() => renderFaultRes());
+}
 
   if (name === 'vote') {
     loadVoteData().then(() => renderVote());
@@ -2006,57 +2022,104 @@ function renderFaultAdmin() {
   document.getElementById('fDone').textContent = solved.length;
 
   function faultCard(f) {
-    return '<div class="fr"><div class="f-ico" style="background:rgba(244,63,94,.09);"><i class="bi ' + FI(f.type) + '" style="color:var(--no);font-size:17px;"></i></div>' +
-      '<div style="flex:1;"><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:5px;">' +
-      '<div class="f-t">' + f.type + '</div><span class="bx ' + PB(f.priority) + '">' + f.priority + '</span><span class="bx ' + SB(f.status) + '">' + LS(f.status) + '</span></div>' +
-      '<div class="f-m"><i class="bi bi-person me-1"></i>' + f.userName + ' · <i class="bi bi-calendar3 me-1"></i>' + f.date + '</div>' +
-      '<div style="font-size:13px;color:var(--t2);margin-top:6px;line-height:1.6;">' + f.desc + '</div>' +
-      '<div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap;">' +
-      (f.status !== 'Çözüldü' ? '<button class="btn-ok btn-s" onclick="chFault(' + f.id + ',\'Çözüldü\')"><i class="bi bi-check2-circle"></i> ' + L('markSolved') + '</button>' : '') +
-      (f.status === 'Beklemede' ? '<button class="btn-g btn-s" onclick="chFault(' + f.id + ',\'İşlemde\')"><i class="bi bi-hourglass-split"></i> ' + L('takeAction') + '</button>' : '') +
-      '<button class="btn-no btn-s" onclick="delFault(' + f.id + ')"><i class="bi bi-trash"></i></button>' +
-      '</div></div></div>';
+    return '<div class="fr">' +
+      '<div class="f-ico" style="background:rgba(244,63,94,.09);">' +
+        '<i class="bi ' + FI(f.type) + '" style="color:var(--no);font-size:17px;"></i>' +
+      '</div>' +
+
+      '<div style="flex:1;">' +
+        '<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:5px;">' +
+          '<div class="f-t">' + f.type + '</div>' +
+          '<span class="bx ' + PB(f.priority) + '">' + f.priority + '</span>' +
+          '<span class="bx ' + SB(f.status) + '">' + LS(f.status) + '</span>' +
+        '</div>' +
+
+        '<div class="f-m">' +
+          '<i class="bi bi-person me-1"></i>' + f.userName +
+' · Daire: ' + (f.userApartment || '-') +
+' · <i class="bi bi-calendar3 me-1"></i>' + f.date +
+' · <i class="bi bi-clock me-1"></i>' + f.time +
+        '</div>' +
+
+        '<div style="font-size:13px;color:var(--t2);margin-top:6px;line-height:1.6;">' + f.desc + '</div>' +
+
+        '<div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap;">' +
+          (f.status !== 'Çözüldü'
+            ? '<button class="btn-ok btn-s" onclick="chFault(' + f.id + ',\'Çözüldü\')"><i class="bi bi-check2-circle"></i> ' + L('markSolved') + '</button>'
+            : '') +
+
+          (f.status === 'Beklemede'
+            ? '<button class="btn-g btn-s" onclick="chFault(' + f.id + ',\'İşlemde\')"><i class="bi bi-hourglass-split"></i> ' + L('takeAction') + '</button>'
+            : '') +
+
+          '<button class="btn-no btn-s" onclick="delFault(' + f.id + ')"><i class="bi bi-trash"></i></button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
   }
 
   function section(title, icon, color, items, emptyText) {
     return '<div class="gc mb-3">' +
       '<div class="sec-t" style="margin-bottom:12px;">' +
-      '<i class="bi ' + icon + '" style="color:' + color + ';"></i>' +
-      '<span>' + title + '</span>' +
-      '<span class="bx bx-neu" style="margin-left:auto;">' + items.length + '</span>' +
+        '<i class="bi ' + icon + '" style="color:' + color + ';"></i>' +
+        '<span>' + title + '</span>' +
+        '<span class="bx bx-neu" style="margin-left:auto;">' + items.length + '</span>' +
       '</div>' +
       (items.length
         ? items.map(faultCard).join('')
         : '<div style="color:var(--t3);font-size:13px;padding:8px 0;">' + emptyText + '</div>') +
-      '</div>';
+    '</div>';
   }
 
   document.getElementById('faultListAdmin').innerHTML =
     section('Beklemede', 'bi-hourglass-split', 'var(--warn)', waiting, 'Bekleyen arıza bulunmuyor.') +
     section('İşlemde', 'bi-tools', 'var(--info)', inProgress, 'İşlemde arıza bulunmuyor.') +
     section('Çözüldü', 'bi-check-circle', 'var(--ok)', solved, 'Çözülmüş arıza bulunmuyor.');
-}
+}function renderFaultRes() {
+  const mf = faults.filter(f => f.userId === CU.id);
+  const af = myFaults();
 
-function renderFaultRes() {
-  const mf=faults.filter(f=>f.userId===CU.id), af=myFaults();
-  document.getElementById('faultListRes').innerHTML=
-    '<div class="gc mb-3"><div class="sec-t"><i class="bi bi-person" style="color:var(--ia);"></i>'+L('myFaults')+'</div>' +
+  document.getElementById('faultListRes').innerHTML =
+    '<div class="gc mb-3"><div class="sec-t"><i class="bi bi-person" style="color:var(--ia);"></i>' + L('myFaults') + '</div>' +
     (mf.length ? mf.map(f =>
       '<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--b1);">' +
-      '<div class="f-ico" style="background:rgba(244,63,94,.09);width:38px;height:38px;border-radius:9px;"><i class="bi '+FI(f.type)+'" style="color:var(--no);font-size:15px;"></i></div>' +
-      '<div style="flex:1;"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">' +
-      '<div style="font-weight:700;font-size:13px;">'+f.type+'</div>' +
-      '<span class="bx '+PB(f.priority)+'">'+f.priority+'</span><span class="bx '+SB(f.status)+'">'+LS(f.status)+'</span></div>' +
-      '<div style="font-size:11px;color:var(--t3);">'+f.date+'</div>' +
-      '<div style="font-size:13px;color:var(--t2);margin-top:3px;">'+f.desc+'</div></div></div>').join('')
-      : '<div style="color:var(--t3);font-size:13px;padding:7px 0;">'+L('noFaults')+'</div>') +
-    '</div><div class="gc"><div class="sec-t"><i class="bi bi-list-ul" style="color:var(--t3);"></i>'+L('allFaults')+'</div>' +
+        '<div class="f-ico" style="background:rgba(244,63,94,.09);width:38px;height:38px;border-radius:9px;"><i class="bi ' + FI(f.type) + '" style="color:var(--no);font-size:15px;"></i></div>' +
+        '<div style="flex:1;">' +
+          '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">' +
+            '<div style="font-weight:700;font-size:13px;">' + f.type + '</div>' +
+            '<span class="bx ' + PB(f.priority) + '">' + f.priority + '</span>' +
+            '<span class="bx ' + SB(f.status) + '">' + LS(f.status) + '</span>' +
+          '</div>' +
+          '<div style="font-size:11px;color:var(--t3);">' +
+            '<i class="bi bi-calendar3 me-1"></i>' + f.date +
+            ' · <i class="bi bi-clock me-1"></i>' + f.time +
+          '</div>' +
+          '<div style="font-size:13px;color:var(--t2);margin-top:3px;">' + f.desc + '</div>' +
+        '</div>' +
+      '</div>'
+    ).join('')
+    : '<div style="color:var(--t3);font-size:13px;padding:7px 0;">' + L('noFaults') + '</div>') +
+    '</div>' +
+
+    '<div class="gc"><div class="sec-t"><i class="bi bi-list-ul" style="color:var(--t3);"></i>' + L('allFaults') + '</div>' +
     af.map(f =>
       '<div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--b1);">' +
-      '<div style="width:34px;height:34px;border-radius:9px;background:rgba(244,63,94,.09);display:flex;align-items:center;justify-content:center;"><i class="bi '+FI(f.type)+'" style="color:var(--no);font-size:13px;"></i></div>' +
-      '<div style="flex:1;"><div style="font-size:13px;font-weight:600;">'+f.type+'<span style="color:var(--t3);font-weight:400;"> · '+f.userName+'</span></div>' +
-      '<div style="font-size:11px;color:var(--t3);">'+f.desc.substring(0,50)+'...</div></div>' +
-      '<span class="bx '+SB(f.status)+'">'+LS(f.status)+'</span></div>').join('') + '</div>';
+        '<div style="width:34px;height:34px;border-radius:9px;background:rgba(244,63,94,.09);display:flex;align-items:center;justify-content:center;"><i class="bi ' + FI(f.type) + '" style="color:var(--no);font-size:13px;"></i></div>' +
+        '<div style="flex:1;">' +
+          '<div style="font-size:13px;font-weight:600;">' +
+            f.type +
+            '<span style="color:var(--t3);font-weight:400;"> · ' + f.userName + ' · Daire: ' + (f.userApartment || '-') + '</span>' +
+          '</div>' +
+          '<div style="font-size:11px;color:var(--t3);">' +
+            '<i class="bi bi-calendar3 me-1"></i>' + f.date +
+            ' · <i class="bi bi-clock me-1"></i>' + f.time +
+          '</div>' +
+          '<div style="font-size:11px;color:var(--t3);margin-top:2px;">' + f.desc.substring(0, 50) + '...</div>' +
+        '</div>' +
+        '<span class="bx ' + SB(f.status) + '">' + LS(f.status) + '</span>' +
+      '</div>'
+    ).join('') +
+    '</div>';
 }
 
 async function createFault() {
@@ -2475,7 +2538,7 @@ const responsibleDues = dues.filter(d =>
       '<th style="color:var(--t3);padding:3px 5px;text-align:right;font-weight:700;">' + L('feeCol') + '</th>' +
       '<th style="color:var(--t3);padding:3px 5px;text-align:right;font-weight:700;">' + L('intCol') + '</th>' +
       '<th style="color:var(--t3);padding:3px 5px;text-align:right;font-weight:700;">' + L('totCol') + '</th>' +
-      '<th style="color:var(--t3);padding:3px 5px;text-align:right;font-weight:700;">İşlem</th>' +
+      
       '</tr></thead><tbody>' +
 
       unpaidDues
@@ -2491,15 +2554,13 @@ const responsibleDues = dues.filter(d =>
             '<td style="padding:9px 5px;text-align:right;background:var(--bg3);">' + amount.toFixed(0) + ' ₺</td>' +
             '<td style="padding:9px 5px;text-align:right;background:var(--bg3);color:var(--warn);">+' + lateFee.toFixed(0) + ' ₺</td>' +
             '<td style="padding:9px 10px;text-align:right;background:var(--bg3);color:var(--no);font-weight:700;">' + remaining.toFixed(0) + ' ₺</td>' +
-            '<td style="padding:9px 10px;text-align:right;background:var(--bg3);border-radius:0 8px 8px 0;">' +
-              '<button class="btn-ok btn-s" onclick="goPayment(' + d.id + ')">Bu Ayı Öde</button>' +
-            '</td>' +
+            '<td style="padding:9px 10px;text-align:right;background:var(--bg3);color:var(--no);font-weight:700;border-radius:0 8px 8px 0;">' + remaining.toFixed(0) + ' ₺</td>' +
           '</tr>';
         }).join('') +
 
       '<tr><td colspan="4" style="padding:12px 10px;font-weight:700;font-family:\'Outfit\',sans-serif;font-size:14px;">' + L('debtRow') + '</td>' +
-      '<td style="padding:12px 10px;text-align:right;font-family:\'Outfit\',sans-serif;font-size:18px;font-weight:900;color:var(--no);">' + totalDebt.toFixed(0) + ' ₺</td></tr>' +
-      '</tbody></table>';
+'<td style="padding:12px 10px;text-align:right;font-family:\'Outfit\',sans-serif;font-size:18px;font-weight:900;color:var(--no);">' + totalDebt.toFixed(0) + ' ₺</td></tr>' +
+'</tbody></table>';
 
     window._debt = {
       total: totalDebt,
@@ -2514,31 +2575,67 @@ const responsibleDues = dues.filter(d =>
 // ─────────────────────────────────────────────────────────────
 // ÖDEME
 // ─────────────────────────────────────────────────────────────
-function goPayment(selectedDueId = null) {
+
+function goPayment() {
   goPage('pay');
 
   const dues = window._backendDues || [];
   const joinedMonth = CU.moveInMonth || 1;
-const currentMonth = new Date().getMonth() + 1;
+  const currentMonth = new Date().getMonth() + 1;
 
-const unpaidDues = dues.filter(d =>
-  d.status !== 'paid' &&
-  d.month >= joinedMonth &&
-  d.month <= currentMonth
-);
+  const unpaidDues = dues.filter(d =>
+    d.status !== 'paid' &&
+    d.month >= joinedMonth &&
+    d.month <= currentMonth
+  ).sort((a, b) => a.month - b.month);
 
-  const payDues = selectedDueId
-    ? unpaidDues.filter(d => d.id === selectedDueId)
-    : unpaidDues;
+  window._paymentDues = unpaidDues;
+  window._selectedPaymentIds = unpaidDues.map(d => d.id);
 
-  window._paymentDues = payDues;
+  renderPaymentSelection();
+}
 
-  const total = payDues.reduce((sum, d) => sum + Number(d.remainingAmount || 0), 0);
+function renderPaymentSelection() {
+  const payDues = window._paymentDues || [];
+  const selectedIds = window._selectedPaymentIds || [];
+
+  const selectedDues = payDues.filter(d => selectedIds.includes(d.id));
+
+  const total = selectedDues.reduce((sum, d) => {
+    return sum + Number(d.remainingAmount || 0);
+  }, 0);
 
   document.getElementById('payAmt').textContent = total.toFixed(0) + ' ₺';
 
   document.getElementById('paySummary').innerHTML =
-    payDues.map(d => {
+    '<div style="font-size:13px;color:var(--t3);margin-bottom:14px;">Ödemek istediğiniz ayları seçin</div>' +
+
+    '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;">' +
+      payDues.map(d => {
+        const selected = selectedIds.includes(d.id);
+        const monthName = MONTHS[d.month - 1];
+
+        return '<div onclick="togglePayMonth(' + d.id + ')" ' +
+          'style="' +
+            'min-width:92px;' +
+            'padding:15px 12px;' +
+            'border-radius:13px;' +
+            'text-align:center;' +
+            'cursor:pointer;' +
+            'font-family:\'Outfit\',sans-serif;' +
+            'font-weight:800;' +
+            'font-size:14px;' +
+            'transition:all .2s;' +
+            'background:' + (selected ? 'rgba(16,185,129,.14)' : 'rgba(107,114,128,.14)') + ';' +
+            'border:1px solid ' + (selected ? 'rgba(16,185,129,.35)' : 'rgba(107,114,128,.25)') + ';' +
+            'color:' + (selected ? 'var(--ok)' : 'var(--t3)') + ';' +
+          '">' +
+          monthName +
+        '</div>';
+      }).join('') +
+    '</div>' +
+
+    selectedDues.map(d => {
       const monthName = MONTHS[d.month - 1];
       const amount = Number(d.amount || 0);
       const lateFee = Number(d.lateFee || 0);
@@ -2546,10 +2643,26 @@ const unpaidDues = dues.filter(d =>
 
       return '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--b1);font-size:13px;">' +
         '<span style="color:var(--t3);">' + monthName + ' 2026 — Aidat: ' + amount.toFixed(0) + ' ₺ + Faiz: ' + lateFee.toFixed(0) + ' ₺</span>' +
-        '<span style="color:var(--no);font-weight:700;">' + totalRow.toFixed(0) + ' ₺</span></div>';
+        '<span style="color:var(--no);font-weight:700;">' + totalRow.toFixed(0) + ' ₺</span>' +
+      '</div>';
     }).join('') +
+
     '<div style="display:flex;justify-content:space-between;padding:14px 0;font-family:\'Outfit\',sans-serif;font-size:18px;font-weight:900;">' +
-    '<span>' + L('totalLbl') + '</span><span style="color:var(--warn);">' + total.toFixed(0) + ' ₺</span></div>';
+      '<span>' + L('totalLbl') + '</span>' +
+      '<span style="color:var(--warn);">' + total.toFixed(0) + ' ₺</span>' +
+    '</div>';
+}
+
+function togglePayMonth(id) {
+  window._selectedPaymentIds = window._selectedPaymentIds || [];
+
+  if (window._selectedPaymentIds.includes(id)) {
+    window._selectedPaymentIds = window._selectedPaymentIds.filter(x => x !== id);
+  } else {
+    window._selectedPaymentIds.push(id);
+  }
+
+  renderPaymentSelection();
 }
 function fmtNum(el) { let v=el.value.replace(/\D/g,'').substring(0,16); el.value=v.replace(/(.{4})/g,'$1 ').trim(); }
 function fmtExp(el) { let v=el.value.replace(/\D/g,''); if(v.length>=2) v=v.substring(0,2)+'/'+v.substring(2,4); el.value=v; }
@@ -2573,10 +2686,10 @@ async function doPay() {
   const joinedMonth = CU.moveInMonth || 1;
 const currentMonth = new Date().getMonth() + 1;
 
-const unpaidDues = window._paymentDues || (window._backendDues || []).filter(d =>
-  d.status !== 'paid' &&
-  d.month >= joinedMonth &&
-  d.month <= currentMonth
+const selectedIds = window._selectedPaymentIds || [];
+
+const unpaidDues = (window._paymentDues || []).filter(d =>
+  selectedIds.includes(d.id)
 );
 
   if (unpaidDues.length === 0) {

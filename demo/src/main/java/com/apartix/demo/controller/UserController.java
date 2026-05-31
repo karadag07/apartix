@@ -6,7 +6,12 @@ import com.apartix.demo.entity.Site;
 import com.apartix.demo.entity.User;
 import com.apartix.demo.repository.SiteRepository;
 import com.apartix.demo.repository.UserRepository;
+import com.apartix.demo.entity.Due;
+import com.apartix.demo.repository.DueRepository;
 
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.time.LocalDate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,14 +22,20 @@ import java.util.UUID;
 @RequestMapping("/api/users")
 @CrossOrigin(origins = "*")
 public class UserController {
-
+    
     private final UserRepository userRepository;
-    private final SiteRepository siteRepository;
+private final SiteRepository siteRepository;
+private final DueRepository dueRepository;
 
-    public UserController(UserRepository userRepository, SiteRepository siteRepository) {
-        this.userRepository = userRepository;
-        this.siteRepository = siteRepository;
-    }
+    public UserController(
+        UserRepository userRepository,
+        SiteRepository siteRepository,
+        DueRepository dueRepository
+) {
+    this.userRepository = userRepository;
+    this.siteRepository = siteRepository;
+    this.dueRepository = dueRepository;
+}
 
     @GetMapping
     public List<User> getAllUsers() {
@@ -82,7 +93,59 @@ public class UserController {
             user.setMoveInMonth(request.getMoveInMonth());
         }
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+if ("resident".equals(savedUser.getRole())) {
+
+    int moveInMonth = savedUser.getMoveInMonth() != null
+            ? savedUser.getMoveInMonth()
+            : 1;
+
+    for (int month = moveInMonth; month <= 12; month++) {
+
+    Due due = new Due();
+
+    due.setSiteId(savedUser.getSiteId());
+    due.setUserId(savedUser.getId());
+    due.setMonth(month);
+    due.setYear(2026);
+
+    BigDecimal amount = new BigDecimal("500.00");
+    BigDecimal dailyRate = new BigDecimal("0.01");
+
+    LocalDate now = LocalDate.now();
+    LocalDate dueLocalDate = LocalDate.of(2026, month, 1);
+    LocalDate lastPaymentDate = dueLocalDate.withDayOfMonth(dueLocalDate.lengthOfMonth());
+
+    BigDecimal lateFee = BigDecimal.ZERO;
+    BigDecimal remainingAmount = BigDecimal.ZERO;
+
+    if (month <= now.getMonthValue()) {
+
+        long lateDays = 0;
+
+        if (now.isAfter(lastPaymentDate)) {
+            lateDays = java.time.temporal.ChronoUnit.DAYS.between(lastPaymentDate, now);
+        }
+
+        lateFee = amount
+                .multiply(dailyRate)
+                .multiply(BigDecimal.valueOf(lateDays));
+
+        remainingAmount = amount.add(lateFee);
+    }
+
+    due.setAmount(amount);
+    due.setLateFee(lateFee);
+    due.setRemainingAmount(remainingAmount);
+    due.setStatus("unpaid");
+    due.setDueDate(Date.valueOf(dueLocalDate));
+
+    dueRepository.save(due);
+}
+}
+
+return savedUser;
     }
 
     @DeleteMapping("/{id}")
