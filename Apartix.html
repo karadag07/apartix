@@ -1,0 +1,2805 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apartix</title>
+<link rel="icon" type="image/png" href="./icon.png?v=2">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+[data-theme="dark"]{
+  --bg:#07090f;--bg2:#0d1220;--bg3:#111827;--bg4:#1a2236;
+  --b1:rgba(120,130,255,.09);--b2:rgba(120,130,255,.18);--b3:rgba(120,130,255,.30);
+  --t1:#edf0ff;--t2:#8fa3cc;--t3:#4a5a7a;--t4:#2a3550;
+  --ia:#6366f1;--ib:#a855f7;--ic:#06b6d4;--id:#f59e0b;
+  --ok:#10b981;--no:#f43f5e;--warn:#f59e0b;--info:#06b6d4;
+  --sh:0 4px 32px rgba(0,0,0,.5);--sb:rgba(6,9,18,.98);
+}
+[data-theme="light"]{
+  --bg:#f0f4ff;--bg2:#fff;--bg3:#f5f8ff;--bg4:#eef2ff;
+  --b1:rgba(99,102,241,.08);--b2:rgba(99,102,241,.18);--b3:rgba(99,102,241,.32);
+  --t1:#0f172a;--t2:#334155;--t3:#64748b;--t4:#94a3b8;
+  --ia:#6366f1;--ib:#a855f7;--ic:#0891b2;--id:#d97706;
+  --ok:#059669;--no:#e11d48;--warn:#d97706;--info:#0891b2;
+  --sh:0 2px 20px rgba(99,102,241,.12);--sb:#fff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"Plus Jakarta Sans",sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s;}
+h1,h2,h3,h4,h5,h6{font-family:"Outfit",sans-serif;}
+.bg-fx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.bg-fx::before{content:"";position:absolute;width:700px;height:700px;background:radial-gradient(circle,rgba(99,102,241,.12) 0%,transparent 70%);top:-250px;right:-200px;border-radius:50%;animation:orb 15s ease-in-out infinite alternate;}
+.bg-fx::after{content:"";position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(168,85,247,.08) 0%,transparent 70%);bottom:-150px;left:-150px;border-radius:50%;animation:orb 19s ease-in-out infinite alternate-reverse;}
+@keyframes orb{0%{transform:translate(0,0);}100%{transform:translate(35px,45px);}}
+[data-theme="light"] .bg-fx::before{background:radial-gradient(circle,rgba(99,102,241,.05) 0%,transparent 70%);}
+[data-theme="light"] .bg-fx::after{background:radial-gradient(circle,rgba(168,85,247,.04) 0%,transparent 70%);}
+.topbar{position:fixed;top:14px;right:20px;z-index:600;display:flex;align-items:center;gap:8px;}
+.tb-btn{height:36px;padding:0 14px;background:var(--bg2);border:1px solid var(--b2);border-radius:50px;color:var(--t2);cursor:pointer;font-size:13px;font-family:"Plus Jakarta Sans",sans-serif;font-weight:500;display:flex;align-items:center;gap:6px;transition:all .2s;backdrop-filter:blur(12px);}
+.tb-btn:hover{border-color:var(--ia);color:var(--ia);}
+.tb-ico{padding:0 10px;}
+.lang-wrap{position:relative;}
+.lang-dd{position:absolute;top:calc(100% + 8px);right:0;min-width:148px;background:var(--bg2);border:1px solid var(--b2);border-radius:14px;overflow:hidden;display:none;box-shadow:var(--sh);z-index:700;}
+.lang-dd.open{display:block;}
+.lang-opt{padding:10px 16px;font-size:13px;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .15s;}
+.lang-opt:hover{background:var(--bg3);}
+.lang-opt.on{color:var(--ia);font-weight:700;}
+#auth-screen{min-height:100vh;display:none;align-items:center;justify-content:center;position:relative;z-index:1;}
+.auth-shell{width:100%;max-width:460px;padding:0 16px;z-index:2;position:relative;}
+.auth-box{background:rgba(13,18,32,.92);border:1px solid var(--b2);border-radius:28px;padding:44px 42px 40px;backdrop-filter:blur(28px);box-shadow:var(--sh);}
+[data-theme="light"] .auth-box{background:rgba(255,255,255,.97);}
+.auth-tabs{display:flex;background:var(--bg4);border-radius:14px;padding:4px;margin-bottom:28px;gap:4px;}
+.auth-tab{flex:1;padding:10px;border-radius:10px;border:none;background:transparent;color:var(--t3);cursor:pointer;font-weight:600;font-size:13px;font-family:"Plus Jakarta Sans",sans-serif;transition:all .2s;}
+.auth-tab.on{background:var(--bg2);color:var(--t1);box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.role-row{display:flex;gap:8px;margin-bottom:22px;}
+.role-btn{flex:1;padding:12px 8px;border-radius:12px;border:1px solid var(--b1);background:transparent;color:var(--t3);cursor:pointer;font-weight:600;font-size:13px;font-family:"Plus Jakarta Sans",sans-serif;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.role-btn.on{background:rgba(99,102,241,.12);border-color:var(--ia);color:var(--ia);}
+.lbl{display:block;font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--t3);margin-bottom:7px;}
+.inp{width:100%;padding:13px 16px;background:var(--bg3);border:1px solid var(--b1);border-radius:12px;color:var(--t1);font-size:14px;font-family:"Plus Jakarta Sans",sans-serif;outline:none;transition:all .2s;}
+.inp:focus{border-color:var(--ia);box-shadow:0 0 0 4px rgba(99,102,241,.10);}
+.inp::placeholder{color:var(--t3);}
+select.inp option{background:var(--bg3);}
+.fg{margin-bottom:16px;}
+.btn-main{width:100%;padding:15px;background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%);border:none;border-radius:14px;color:#fff;font-family:"Outfit",sans-serif;font-weight:700;font-size:16px;cursor:pointer;transition:all .25s;box-shadow:0 8px 24px rgba(99,102,241,.32);}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(99,102,241,.48);}
+.auth-hint{text-align:center;margin-top:16px;font-size:12px;color:var(--t3);}
+#app{display:none;min-height:100vh;}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:268px;background:var(--sb);border-right:1px solid var(--b1);backdrop-filter:blur(24px);z-index:200;display:flex;flex-direction:column;transition:background .3s;}
+.sb-head{padding:20px 20px 16px;border-bottom:1px solid var(--b1);}
+.sb-site{margin:12px 12px 4px;padding:12px 14px;background:var(--bg3);border:1px solid var(--b1);border-radius:12px;display:flex;align-items:center;gap:10px;}
+.sb-badge{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#a855f7);display:flex;align-items:center;justify-content:center;font-family:"Outfit",sans-serif;font-weight:800;font-size:14px;color:#fff;flex-shrink:0;}
+.sb-site-name{font-weight:700;font-size:13px;color:var(--t1);}
+.sb-site-addr{font-size:10px;color:var(--t3);margin-top:1px;}
+.sb-user{margin:6px 12px 8px;padding:12px 14px;background:var(--bg4);border:1px solid var(--b1);border-radius:12px;display:flex;align-items:center;gap:10px;}
+.ava{width:40px;height:40px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:"Outfit",sans-serif;font-weight:800;font-size:15px;}
+.ava-a{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;}
+.ava-r{background:linear-gradient(135deg,#06b6d4,#0891b2);color:#fff;}
+.u-name{font-weight:700;font-size:13px;color:var(--t1);}
+.u-role{font-size:11px;color:var(--t3);margin-top:1px;}
+.sb-nav{padding:8px;flex:1;overflow-y:auto;}
+.nav-sec{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t4);padding:10px 14px 4px;font-weight:700;}
+.nav-it{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:11px;color:var(--t3);cursor:pointer;transition:all .18s;font-size:13px;font-weight:500;margin-bottom:2px;text-decoration:none;position:relative;}
+.nav-it i{font-size:16px;width:18px;flex-shrink:0;}
+.nav-it:hover{background:var(--bg3);color:var(--t1);}
+.nav-it.on{background:rgba(99,102,241,.12);color:var(--ia);font-weight:600;}
+.nav-it.on::before{content:"";position:absolute;left:0;top:22%;bottom:22%;width:3px;border-radius:0 3px 3px 0;background:linear-gradient(180deg,#6366f1,#a855f7);}
+.sb-foot{padding:12px 12px 16px;border-top:1px solid var(--b1);}
+.btn-out{width:100%;padding:10px;border-radius:11px;border:1px solid rgba(244,63,94,.22);background:rgba(244,63,94,.06);color:var(--no);cursor:pointer;font-size:13px;font-weight:600;font-family:"Plus Jakarta Sans",sans-serif;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;}
+.btn-out:hover{background:rgba(244,63,94,.14);}
+.main{margin-left:268px;min-height:100vh;padding:34px 38px;position:relative;z-index:1;}
+.pg{display:none;animation:fi .22s ease;}
+.pg.on{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:translateY(0);}}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--ia);margin-bottom:5px;}
+.pg-title{font-family:"Outfit",sans-serif;font-size:28px;font-weight:800;line-height:1.15;letter-spacing:-.4px;color:var(--t1);}
+.pg-sub{font-size:14px;color:var(--t3);margin-top:5px;}
+.pg-head{margin-bottom:28px;}
+.gc{background:var(--bg2);border:1px solid var(--b1);border-radius:18px;padding:22px;transition:background .3s;}
+.sc{background:var(--bg2);border:1px solid var(--b1);border-radius:18px;padding:22px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s,background .3s;}
+.sc:hover{transform:translateY(-3px);box-shadow:var(--sh);border-color:var(--b2);}
+.sc-ico{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:16px;}
+.sc-val{font-family:"Outfit",sans-serif;font-size:32px;font-weight:800;line-height:1;letter-spacing:-1px;}
+.sc-lbl{font-size:12px;color:var(--t3);margin-top:5px;font-weight:500;}
+.bx{display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:50px;font-size:11px;font-weight:700;}
+.bx-ok{background:rgba(16,185,129,.11);color:var(--ok);border:1px solid rgba(16,185,129,.22);}
+.bx-no{background:rgba(244,63,94,.11);color:var(--no);border:1px solid rgba(244,63,94,.22);}
+.bx-warn{background:rgba(245,158,11,.11);color:var(--warn);border:1px solid rgba(245,158,11,.22);}
+.bx-info{background:rgba(6,182,212,.11);color:var(--info);border:1px solid rgba(6,182,212,.22);}
+.bx-neu{background:var(--bg3);color:var(--t3);border:1px solid var(--b1);}
+.bx-ind{background:rgba(99,102,241,.11);color:var(--ia);border:1px solid rgba(99,102,241,.22);}
+.bx-vio{background:rgba(168,85,247,.11);color:var(--ib);border:1px solid rgba(168,85,247,.22);}
+.btn-a{background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:11px;color:#fff;padding:10px 20px;font-weight:700;font-size:13px;font-family:"Plus Jakarta Sans",sans-serif;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(99,102,241,.28);display:inline-flex;align-items:center;gap:6px;}
+.btn-a:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(99,102,241,.42);}
+.btn-g{background:var(--bg3);border:1px solid var(--b2);border-radius:11px;color:var(--t2);padding:10px 20px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
+.btn-g:hover{background:var(--bg2);color:var(--t1);}
+.btn-ok{background:rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.22);color:var(--ok);border-radius:9px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px;}
+.btn-ok:hover{background:rgba(16,185,129,.20);}
+.btn-no{background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.20);color:var(--no);border-radius:9px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px;}
+.btn-no:hover{background:rgba(244,63,94,.18);}
+.btn-no:disabled{
+  background:#6b7280 !important;
+  border-color:#6b7280 !important;
+  color:#cbd5e1 !important;
+  cursor:not-allowed;
+  opacity:.7;
+}
+.btn-s{padding:5px 11px!important;font-size:11px!important;border-radius:8px!important;}
+.fi{width:100%;padding:11px 15px;background:var(--bg3);border:1px solid var(--b1);border-radius:11px;color:var(--t1);font-size:13px;font-family:"Plus Jakarta Sans",sans-serif;outline:none;transition:all .2s;}
+.fi:focus{border-color:var(--ia);box-shadow:0 0 0 3px rgba(99,102,241,.10);}
+.fi::placeholder{color:var(--t3);}
+textarea.fi{resize:vertical;min-height:95px;font-family:inherit;}
+select.fi option{background:var(--bg3);}
+.fl{display:block;font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--t3);margin-bottom:7px;}
+.ann{background:var(--bg2);border:1px solid var(--b1);border-radius:17px;padding:22px;margin-bottom:14px;transition:all .2s;}
+.ann:hover{border-color:var(--b2);box-shadow:var(--sh);}
+.ann-t{font-family:"Outfit",sans-serif;font-size:18px;font-weight:700;color:var(--t1);margin-bottom:5px;}
+.ann-m{color:var(--t3);font-size:12px;margin-bottom:12px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.ann-b{color:var(--t2);font-size:14px;line-height:1.75;}
+.ann-f{margin-top:16px;padding-top:14px;border-top:1px solid var(--b1);display:flex;gap:7px;align-items:center;flex-wrap:wrap;}
+.cm{background:var(--bg3);border-radius:11px;padding:12px 15px;margin-top:10px;border:1px solid var(--b1);}
+.cm-n{font-weight:700;font-size:12px;color:var(--ic);}
+.cm-b{font-size:13px;color:var(--t2);margin-top:3px;line-height:1.6;}
+.cm-rep{margin-left:18px;margin-top:8px;padding-left:12px;border-left:2px solid var(--b2);}
+.cm-rep .cm-n{color:var(--ib);}
+.fr{background:var(--bg2);border:1px solid var(--b1);border-radius:15px;padding:18px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px;transition:all .2s;}
+.fr:hover{border-color:var(--b2);}
+.f-ico{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.f-t{font-weight:700;font-size:14px;color:var(--t1);margin-bottom:3px;}
+.f-m{font-size:11px;color:var(--t3);margin-top:3px;}
+.vc{background:var(--bg2);border:1px solid var(--b1);border-radius:17px;padding:20px 14px;text-align:center;cursor:pointer;transition:all .22s;}
+.vc:hover{border-color:rgba(245,158,11,.4);transform:translateY(-3px);box-shadow:0 12px 30px rgba(245,158,11,.09);}
+.vc.vd{border-color:var(--warn);background:rgba(245,158,11,.05);}
+.v-ava{width:64px;height:64px;border-radius:16px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-family:"Outfit",sans-serif;font-size:22px;font-weight:900;}
+.v-nm{font-family:"Outfit",sans-serif;font-size:13px;font-weight:800;color:var(--t1);}
+.v-apt{font-size:10px;color:var(--t3);margin-top:2px;}
+.v-num{font-family:"Outfit",sans-serif;font-size:32px;font-weight:900;color:var(--warn);line-height:1;margin-top:10px;letter-spacing:-2px;}
+.v-lbl{font-size:9px;color:var(--t3);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.mt{padding:12px 5px;border-radius:11px;text-align:center;font-family:"Outfit",sans-serif;font-weight:700;font-size:12px;transition:transform .15s;cursor:default;}
+.mt:hover{transform:scale(1.04);}
+.mt-p{background:rgba(16,185,129,.11);border:1px solid rgba(16,185,129,.25);color:var(--ok);}
+.mt-u{background:rgba(244,63,94,.11);border:1px solid rgba(244,63,94,.25);color:var(--no);}
+.mt-s{font-size:9px;font-weight:600;margin-top:2px;opacity:.8;}
+.cc{background:linear-gradient(135deg,#1e1b4b 0%,#312e81 45%,#1e3a5f 100%);border-radius:20px;padding:26px 28px;position:relative;overflow:hidden;height:185px;margin-bottom:22px;}
+.cc-chip{width:40px;height:28px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:6px;margin-bottom:20px;position:relative;z-index:1;}
+.cc-num{font-family:"Outfit",sans-serif;font-size:18px;letter-spacing:3px;color:#fff;margin-bottom:16px;position:relative;z-index:1;font-weight:600;}
+.cc-row{display:flex;justify-content:space-between;position:relative;z-index:1;}
+.cc-l{font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1.2px;}
+.cc-v{font-size:13px;font-weight:700;color:#fff;margin-top:2px;}
+.cc-d1{position:absolute;right:-40px;top:-40px;width:190px;height:190px;border-radius:50%;border:48px solid rgba(255,255,255,.04);}
+.cc-d2{position:absolute;right:40px;bottom:-55px;width:155px;height:155px;border-radius:50%;border:32px solid rgba(255,255,255,.03);}
+.cc-ico{position:absolute;right:20px;top:20px;opacity:.55;font-size:28px;z-index:1;color:#fff;}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(7px);padding:16px;}
+.mo.on{display:flex;}
+.mb{background:var(--bg2);border:1px solid var(--b2);border-radius:22px;padding:34px;width:100%;max-width:500px;position:relative;max-height:90vh;overflow-y:auto;}
+.mb-t{font-family:"Outfit",sans-serif;font-size:21px;font-weight:800;margin-bottom:22px;color:var(--t1);}
+.mc{position:absolute;top:14px;right:14px;background:var(--bg3);border:1px solid var(--b1);border-radius:8px;width:30px;height:30px;color:var(--t3);cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;transition:all .2s;border:none;}
+.mc:hover{background:rgba(244,63,94,.12);color:var(--no);}
+.tc{position:fixed;top:18px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:7px;}
+.ti{background:var(--bg2);border:1px solid var(--b2);border-radius:13px;padding:12px 17px;font-size:13px;min-width:270px;backdrop-filter:blur(20px);display:flex;align-items:center;gap:9px;animation:tin .28s cubic-bezier(.34,1.56,.64,1);box-shadow:var(--sh);font-weight:500;}
+.ti-ok{border-left:3px solid var(--ok);}
+.ti-no{border-left:3px solid var(--no);}
+.ti-w{border-left:3px solid var(--warn);}
+@keyframes tin{from{transform:translateX(110%) scale(.9);opacity:0;}to{transform:translateX(0) scale(1);opacity:1;}}
+.divider{border:none;border-top:1px solid var(--b1);margin:18px 0;}
+.hi{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.17);border-radius:11px;padding:13px 17px;}
+.sec-t{font-family:"Outfit",sans-serif;font-size:15px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:7px;margin-bottom:16px;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px;}
+@media(max-width:768px){.sidebar{width:240px;transform:translateX(-100%);transition:transform .3s;}.main{margin-left:0;padding:18px 14px;}.sidebar.open{transform:translateX(0);}}
+</style>
+</head>
+<body>
+<div class="bg-fx"></div>
+<div class="tc" id="TC"></div>
+
+<div class="topbar">
+  <button class="tb-btn tb-ico" onclick="toggleTheme()"><i class="bi bi-moon-stars-fill" id="themeIco"></i></button>
+  <div class="lang-wrap">
+    <button class="tb-btn" onclick="toggleLang()"><i class="bi bi-globe2"></i><span id="langLbl">TR</span><i class="bi bi-chevron-down" style="font-size:10px"></i></button>
+    <div class="lang-dd" id="langDD">
+      <div class="lang-opt on" onclick="setLang('tr')">🇹🇷 Türkçe</div>
+      <div class="lang-opt" onclick="setLang('en')">🇬🇧 English</div>
+      <div class="lang-opt" onclick="setLang('de')">🇩🇪 Deutsch</div>
+      <div class="lang-opt" onclick="setLang('ar')">🇸🇦 العربية</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ AUTH ═══════════ -->
+<div id="auth-screen">
+  <div class="auth-shell">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="display:inline-flex;align-items:center;gap:12px;justify-content:center;margin-bottom:8px;">
+        <svg width="48" height="48" viewBox="0 0 52 52" fill="none">
+          <defs>
+            <linearGradient id="lg1" x1="0" y1="0" x2="52" y2="52" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#818cf8"/><stop offset="50%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#38bdf8"/>
+            </linearGradient>
+            <linearGradient id="lg2" x1="0" y1="52" x2="52" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#38bdf8" stop-opacity=".55"/><stop offset="100%" stop-color="#818cf8" stop-opacity=".1"/>
+            </linearGradient>
+          </defs>
+          <path d="M26 47L4 35V17L26 5L48 17V35Z" fill="url(#lg2)" stroke="url(#lg1)" stroke-width="1.2"/>
+          <rect x="8" y="20" width="14" height="25" rx="2.5" fill="url(#lg1)"/>
+          <rect x="10" y="23" width="4" height="4" rx="1" fill="rgba(255,255,255,.85)"/>
+          <rect x="16" y="23" width="4" height="4" rx="1" fill="rgba(255,255,255,.6)"/>
+          <rect x="10" y="30" width="4" height="4" rx="1" fill="rgba(255,255,255,.6)"/>
+          <rect x="16" y="30" width="4" height="4" rx="1" fill="rgba(255,255,255,.9)"/>
+          <rect x="10" y="38" width="4" height="7" rx="1" fill="rgba(255,255,255,.4)"/>
+          <rect x="16" y="38" width="4" height="7" rx="1" fill="rgba(255,255,255,.5)"/>
+          <rect x="23" y="11" width="12" height="34" rx="2.5" fill="url(#lg1)" opacity=".92"/>
+          <rect x="25" y="14" width="3.5" height="3.5" rx=".8" fill="rgba(255,255,255,.9)"/>
+          <rect x="30" y="14" width="3.5" height="3.5" rx=".8" fill="rgba(255,255,255,.7)"/>
+          <rect x="25" y="20" width="3.5" height="3.5" rx=".8" fill="rgba(255,255,255,.7)"/>
+          <rect x="30" y="20" width="3.5" height="3.5" rx=".8" fill="rgba(255,255,255,.95)"/>
+          <rect x="25" y="26" width="3.5" height="3.5" rx=".8" fill="rgba(255,255,255,.6)"/>
+          <rect x="30" y="26" width="3.5" height="3.5" rx=".8" fill="rgba(255,255,255,.8)"/>
+          <rect x="26.5" y="37" width="5" height="8" rx="1.2" fill="rgba(255,255,255,.55)"/>
+          <rect x="36" y="24" width="10" height="21" rx="2.5" fill="url(#lg1)" opacity=".7"/>
+          <rect x="38" y="27" width="3" height="3" rx=".7" fill="rgba(255,255,255,.8)"/>
+          <rect x="43" y="27" width="2.5" height="3" rx=".7" fill="rgba(255,255,255,.6)"/>
+          <rect x="38" y="33" width="3" height="3" rx=".7" fill="rgba(255,255,255,.6)"/>
+          <rect x="43" y="33" width="2.5" height="3" rx=".7" fill="rgba(255,255,255,.8)"/>
+          <line x1="29" y1="11" x2="29" y2="4" stroke="url(#lg1)" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="29" cy="3.5" r="1.8" fill="#818cf8"/>
+        </svg>
+        <span style="font-family:'Outfit',sans-serif;font-weight:900;font-size:36px;background:linear-gradient(135deg,#818cf8,#a78bfa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Apartix</span>
+      </div>
+      <div id="authTagline" style="font-size:13px;color:var(--t3);letter-spacing:.4px;">Apartman & Site Yönetim Platformu</div>
+    </div>
+    <div class="auth-box">
+      <div class="auth-tabs">
+        <button class="auth-tab on" id="tabLogin" onclick="switchTab('login')">Giriş Yap</button>
+        <button class="auth-tab" id="tabReg" onclick="switchTab('register')">Kayıt Ol</button>
+      </div>
+
+      <!-- GİRİŞ -->
+      <div id="formLogin">
+        <div class="role-row">
+          <button class="role-btn on" id="lRA" onclick="selRole('yonetici',this)"><i class="bi bi-shield-check"></i> <span id="lRATxt">Yönetici</span></button>
+          <button class="role-btn" id="lRB" onclick="selRole('sakin',this)"><i class="bi bi-house-door"></i> <span id="lRBTxt">Sakin</span></button>
+        </div>
+        <div class="fg"><label class="lbl" id="lEmailLbl">E-POSTA</label><input type="email" class="inp" id="lEmail" placeholder="ornek@mail.com"></div>
+        <div class="fg" style="margin-bottom:26px;"><label class="lbl" id="lPassLbl">ŞİFRE</label><input type="password" class="inp" id="lPass" placeholder="••••••••"></div>
+        <div style="text-align:right;margin-top:-12px;margin-bottom:18px;">
+  <span onclick="openM('mForgotPass')" style="font-size:12px;color:var(--ia);cursor:pointer;font-weight:600;">
+    Şifremi Unuttum?
+  </span>
+</div>
+        <button class="btn-main" onclick="doLogin()"><i class="bi bi-arrow-right-circle" style="margin-right:8px;"></i><span id="loginBtnTxt">Giriş Yap</span></button>
+        <div class="auth-hint" id="demoHint">Hoşgeldiniz! Rolünüzü seçip giriş yapınız.</div>
+      </div>
+
+      <!-- KAYIT -->
+      <div id="formReg" style="display:none;">
+        <div class="role-row">
+          <button class="role-btn on" id="rRA" onclick="selRegRole('yonetici',this)"><i class="bi bi-shield-check"></i> <span id="rRATxt">Yönetici</span></button>
+          <button class="role-btn" id="rRB" onclick="selRegRole('sakin',this)"><i class="bi bi-house-door"></i> <span id="rRBTxt">Sakin</span></button>
+        </div>
+        <div class="fg" id="siteCreateBox">
+  <label class="lbl">SİTE / APARTMAN BİLGİLERİ</label>
+  <input type="text" class="inp" style="margin-bottom:8px;" id="rSiteName" placeholder="Site / Apartman adı">
+  <input type="text" class="inp" id="rSiteAddr" placeholder="Adres">
+</div>
+
+<div class="fg" id="joinCodeBox" style="display:none;">
+  <label class="lbl">KATILIM KODU</label>
+  <input type="text" class="inp" id="rJoinCode" placeholder="Örn: GUNES-2026">
+</div>
+        <div class="fg" id="daireWrap" style="display:none;"><label class="lbl" id="daireLbl">DAİRE NO</label><input type="text" class="inp" id="rDaire" placeholder="örn: 1A"></div>
+        <div class="fg" id="moveInWrap" style="display:none;">
+  <label class="lbl">TAŞINMA AYI</label>
+  <select class="inp" id="rMoveInMonth">
+    <option value="1">Ocak</option>
+    <option value="2">Şubat</option>
+    <option value="3">Mart</option>
+    <option value="4">Nisan</option>
+    <option value="5">Mayıs</option>
+    <option value="6">Haziran</option>
+    <option value="7">Temmuz</option>
+    <option value="8">Ağustos</option>
+    <option value="9">Eylül</option>
+    <option value="10">Ekim</option>
+    <option value="11">Kasım</option>
+    <option value="12">Aralık</option>
+  </select>
+</div>
+        <div class="fg"><label class="lbl" id="nameLbl">AD SOYAD</label><input type="text" class="inp" id="rName" placeholder="Ad Soyad"></div>
+        <div class="fg"><label class="lbl" id="rEmailLbl">E-POSTA</label><input type="email" class="inp" id="rEmail" placeholder="eposta@mail.com"></div>
+        <div class="fg" style="margin-bottom:26px;"><label class="lbl" id="rPassLbl">ŞİFRE</label><input type="password" class="inp" id="rPass" placeholder="En az 6 karakter"></div>
+        <button class="btn-main" onclick="doRegister()"><i class="bi bi-person-plus" style="margin-right:8px;"></i><span id="regBtnTxt">Kayıt Ol</span></button>
+        <div class="auth-hint" id="regHint">Kayıt sonrası otomatik giriş yapılır</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ APP ═══════════ -->
+<div id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <svg width="30" height="30" viewBox="0 0 52 52" fill="none">
+          <defs>
+            <linearGradient id="lgS" x1="0" y1="0" x2="52" y2="52" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#818cf8"/><stop offset="50%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#38bdf8"/></linearGradient>
+            <linearGradient id="lgS2" x1="0" y1="52" x2="52" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#38bdf8" stop-opacity=".5"/><stop offset="100%" stop-color="#818cf8" stop-opacity=".1"/></linearGradient>
+          </defs>
+          <path d="M26 47L4 35V17L26 5L48 17V35Z" fill="url(#lgS2)" stroke="url(#lgS)" stroke-width="1.2"/>
+          <rect x="8" y="20" width="14" height="25" rx="2.5" fill="url(#lg1)"/>
+          <rect x="10" y="23" width="4" height="4" rx="1" fill="rgba(255,255,255,.85)"/>
+          <rect x="16" y="23" width="4" height="4" rx="1" fill="rgba(255,255,255,.6)"/>
+          <rect x="10" y="30" width="4" height="4" rx="1" fill="rgba(255,255,255,.6)"/>
+          <rect x="16" y="30" width="4" height="4" rx="1" fill="rgba(255,255,255,.9)"/>
+          <rect x="10" y="38" width="4" height="7" rx="1" fill="rgba(255,255,255,.4)"/>
+          <rect x="16" y="38" width="4" height="7" rx="1" fill="rgba(255,255,255,.5)"/>
+          <rect x="23" y="11" width="12" height="34" rx="2.5" fill="url(#lg1)" opacity=".92"/>
+          <rect x="25" y="14" width="3.5" height="3.5" rx=".8" fill="rgba(255,255,255,.9)"/>
+          <rect x="30" y="14" width="3.5" height="3.5" rx=".8" fill="rgba(255,255,255,.7)"/>
+          <rect x="25" y="20" width="3.5" height="3.5" rx=".8" fill="rgba(255,255,255,.7)"/>
+          <rect x="30" y="20" width="3.5" height="3.5" rx=".8" fill="rgba(255,255,255,.95)"/>
+          <rect x="25" y="26" width="3.5" height="3.5" rx=".8" fill="rgba(255,255,255,.6)"/>
+          <rect x="30" y="26" width="3.5" height="3.5" rx=".8" fill="rgba(255,255,255,.8)"/>
+          <rect x="26.5" y="37" width="5" height="8" rx="1.2" fill="rgba(255,255,255,.55)"/>
+          <rect x="36" y="24" width="10" height="21" rx="2.5" fill="url(#lg1)" opacity=".7"/>
+          <rect x="38" y="27" width="3" height="3" rx=".7" fill="rgba(255,255,255,.8)"/>
+          <rect x="43" y="27" width="2.5" height="3" rx=".7" fill="rgba(255,255,255,.6)"/>
+          <rect x="38" y="33" width="3" height="3" rx=".7" fill="rgba(255,255,255,.6)"/>
+          <rect x="43" y="33" width="2.5" height="3" rx=".7" fill="rgba(255,255,255,.8)"/>
+          <line x1="29" y1="11" x2="29" y2="4" stroke="url(#lg1)" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="29" cy="3.5" r="1.8" fill="#818cf8"/>
+        </svg>
+        <div>
+          <div style="font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;background:linear-gradient(135deg,#818cf8,#a78bfa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Apartix</div>
+          <div id="sbTag" style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);"> Site Yönetimi</div>
+        </div>
+      </div>
+    </div>
+    <div class="sb-site"><div class="sb-badge" id="sbBadge">A</div><div><div class="sb-site-name" id="sbSiteName">—</div><div class="sb-site-addr" id="sbSiteAddr">—</div></div></div>
+    <div class="sb-user"><div class="ava" id="sbAva">A</div><div><div class="u-name" id="sbName">—</div><div class="u-role" id="sbRole">—</div></div></div>
+    <nav class="sb-nav" id="sbNav"></nav>
+    <div class="sb-foot">
+  <button class="btn-g"
+        onclick="openM('mChangePass')"
+        style="width:100%;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;">
+  <i class="bi bi-key"></i>
+  <span>Şifre Değiştir</span>
+</button>
+
+  <button class="btn-out" onclick="doLogout()">
+    <i class="bi bi-box-arrow-left"></i><span id="logoutTxt"> Çıkış Yap</span>
+  </button>
+</div>
+  </aside>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div class="pg on" id="pg-dash">
+      <div class="pg-head"><div class="eyebrow" id="eyeDash">GENEL BAKIŞ</div><div class="pg-title" id="dashTitle">Kontrol Paneli</div><div class="pg-sub" id="dashSub"></div></div>
+      <div class="row g-3 mb-4" id="statCards"></div>
+      <div class="row g-3 mb-4" id="dashCharts"></div>
+      <div class="row g-3" id="dashQuick"></div>
+    </div>
+
+    <!-- DUYURULAR YÖNETİCİ -->
+    <div class="pg" id="pg-ann-admin">
+      <div class="pg-head d-flex justify-content-between align-items-start">
+        <div><div class="eyebrow" id="eyeAnnA">YAYIN & İLETİŞİM</div><div class="pg-title" id="titleAnnA">Duyuru Yönetimi</div><div class="pg-sub" id="subAnnA">Duyuru paylaşın ve yorumları yönetin</div></div>
+        <button class="btn-a" id="newAnnBtn" onclick="openM('mAnn')" style="margin-top:6px;"><i class="bi bi-plus-lg"></i> Yeni Duyuru</button>
+      </div>
+      <div id="annListAdmin"></div>
+    </div>
+
+    <!-- DUYURULAR SAKİN -->
+    <div class="pg" id="pg-ann-sakin">
+      <div class="pg-head"><div class="eyebrow" id="eyeAnnR">HABERLER</div><div class="pg-title" id="titleAnnR">Duyurular</div><div class="pg-sub" id="subAnnR">Güncel site duyuruları</div></div>
+      <div id="annListRes"></div>
+    </div>
+
+    <!-- ARIZA YÖNETİCİ -->
+    <div class="pg" id="pg-fault-admin">
+      <div class="pg-head"><div class="eyebrow" id="eyeFaultA">TEKNİK SERVİS</div><div class="pg-title" id="titleFaultA">Arıza Yönetimi</div><div class="pg-sub" id="subFaultA">Bildirilen arızaları görüntüleyin ve yönetin</div></div>
+      <div class="row g-3 mb-4">
+        <div class="col-md-4"><div class="sc"><div class="sc-ico" style="background:rgba(244,63,94,.11);"><i class="bi bi-exclamation-triangle" style="color:var(--no);font-size:20px;"></i></div><div class="sc-val" style="color:var(--no);" id="fTotal">0</div><div class="sc-lbl" id="fTotalLbl">Toplam Arıza</div></div></div>
+        <div class="col-md-4"><div class="sc"><div class="sc-ico" style="background:rgba(245,158,11,.11);"><i class="bi bi-hourglass-split" style="color:var(--warn);font-size:20px;"></i></div><div class="sc-val" style="color:var(--warn);" id="fPend">0</div><div class="sc-lbl" id="fPendLbl">Beklemede</div></div></div>
+        <div class="col-md-4"><div class="sc"><div class="sc-ico" style="background:rgba(16,185,129,.11);"><i class="bi bi-check-circle" style="color:var(--ok);font-size:20px;"></i></div><div class="sc-val" style="color:var(--ok);" id="fDone">0</div><div class="sc-lbl" id="fDoneLbl">Çözüldü</div></div></div>
+      </div>
+      <div id="faultListAdmin"></div>
+    </div>
+
+    <!-- ARIZA SAKİN -->
+    <div class="pg" id="pg-fault-sakin">
+      <div class="pg-head d-flex justify-content-between align-items-start">
+        <div><div class="eyebrow" id="eyeFaultR">TEKNİK DESTEK</div><div class="pg-title" id="titleFaultR">Arıza Taleplerim</div><div class="pg-sub" id="subFaultR">Arıza bildirin ve durumunu takip edin</div></div>
+        <button class="btn-a" id="newFaultBtn" onclick="openM('mFault')" style="margin-top:6px;"><i class="bi bi-plus-lg"></i> Arıza Bildir</button>
+      </div>
+      <div id="faultListRes"></div>
+    </div>
+
+    <!-- OYLAMA -->
+    <div class="pg" id="pg-vote">
+      <div class="pg-head"><div class="eyebrow" id="eyeVote">DEMOKRATİK SEÇİM</div><div class="pg-title" id="titleVote">Yönetici Oylaması</div><div class="pg-sub" id="subVote">Site yöneticisi seçimi — 2026</div></div>
+      <div class="gc mb-4" style="display:flex;align-items:center;gap:14px;">
+        <div style="width:46px;height:46px;border-radius:13px;background:rgba(245,158,11,.11);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;"><i class="bi bi-megaphone" style="color:var(--warn);"></i></div>
+        <div style="flex:1;"><div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;" id="voteElectionTitle">Yönetici Seçimi — 2026</div><div style="font-size:12px;color:var(--t3);margin-top:3px;" id="voteRule">Kendinize oy veremezsiniz. Her kullanıcı yalnızca bir kez oy kullanabilir.</div></div>
+        <span class="bx bx-ok" id="voteActiveBadge">Aktif</span>
+      </div>
+      <div class="row g-3 mb-4" id="voteCards"></div>
+      <div class="gc"><div class="sec-t"><i class="bi bi-bar-chart-line" style="color:var(--warn);"></i><span id="voteResultsTitle">Anlık Sonuçlar</span></div><div style="position:relative;height:260px;"><canvas id="voteChart"></canvas></div></div>
+    </div>
+
+    <!-- AİDAT YÖNETİCİ -->
+    <div class="pg" id="pg-aidat-admin">
+      <div class="pg-head"><div class="eyebrow" id="eyeAidatA">FİNANS & TAKİP</div><div class="pg-title" id="titleAidatA">Aidat Yönetimi</div><div class="pg-sub" id="subAidatA">Tüm sakinlerin 2026 aidat durumu</div></div>
+      <div id="aidatAdmin"></div>
+    </div>
+
+    <!-- AİDAT SAKİN -->
+    <div class="pg" id="pg-aidat-sakin">
+      <div class="pg-head"><div class="eyebrow" id="eyeAidatR">ÖDEME TAKİBİ</div><div class="pg-title" id="titleAidatR">Aidat Ödemelerim</div><div class="pg-sub" id="subAidatR">2026 yılı aidat durumunuz</div></div>
+      <div class="row g-3 mb-4">
+        <div class="col-md-4"><div class="sc">
+          <div class="sc-ico" style="background:rgba(16,185,129,.11);"><i class="bi bi-check-circle" style="color:var(--ok);font-size:20px;"></i></div><div class="sc-val" style="color:var(--ok);" id="paidC">0</div><div class="sc-lbl" id="paidMLbl">Ödenen Ay</div></div></div>
+        <div class="col-md-4"><div class="sc"><div class="sc-ico" style="background:rgba(244,63,94,.11);"><i class="bi bi-x-circle" style="color:var(--no);font-size:20px;"></i></div><div class="sc-val" style="color:var(--no);" id="unpaidC">0</div><div class="sc-lbl" id="unpaidMLbl">Ödenmeyen Ay</div></div></div>
+        <div class="col-md-4"><div class="sc"><div class="sc-ico" style="background:rgba(245,158,11,.11);"><i class="bi bi-currency-dollar" style="color:var(--warn);font-size:20px;"></i></div><div class="sc-val" style="color:var(--warn);" id="debtTot">0 ₺</div><div class="sc-lbl" id="debtTotLbl">Toplam Borç (Faizli)</div></div></div>
+      </div>
+      <div class="gc mb-4"><div class="sec-t"><i class="bi bi-calendar3" style="color:var(--ia);"></i><span id="aidatYrTitle">2026 Yılı Aidat Durumu</span></div><div class="row g-2" id="aidatMonths"></div></div>
+      <div class="gc mb-4" id="debtBox" style="display:none;">
+        <div class="d-flex justify-content-between align-items-center mb-3"><div class="sec-t" style="margin-bottom:0;"><i class="bi bi-receipt" style="color:var(--no);"></i><span id="debtDetailTitle"> Borç Detayı</span></div><span class="bx bx-no" id="debtAmt">0 ₺</span></div>
+        <div id="debtBreak"></div>
+        <div style="margin-top:18px;"><button class="btn-a" onclick="goPayment()"><i class="bi bi-credit-card"></i> <span id="payDebtBtn">Borcumu Öde</span></button></div>
+      </div>
+    </div>
+
+    <!-- ÖDEME -->
+    <div class="pg" id="pg-pay">
+      <div class="pg-head d-flex align-items-center gap-3">
+        <button class="btn-g" onclick="goPage('aidat-sakin')" style="padding:9px 13px;border-radius:11px;"><i class="bi bi-arrow-left"></i></button>
+        <div><div class="eyebrow" id="eyePay">GÜVENLİ ÖDEME</div><div class="pg-title" id="titlePay">Aidat Ödemesi</div></div>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-6"><div class="gc">
+          <div class="cc"><div class="cc-d1"></div><div class="cc-d2"></div><i class="bi bi-credit-card-2-front cc-ico"></i><div class="cc-chip"></div><div class="cc-num" id="ccNum">•••• •••• •••• ••••</div><div class="cc-row"><div><div class="cc-l" id="ccHolderLbl">Kart Sahibi</div><div class="cc-v" id="ccName">AD SOYAD</div></div><div><div class="cc-l" id="ccExpLbl">Son Kullanma</div><div class="cc-v" id="ccExp">MM/YY</div></div></div></div>
+          <div class="fg"><label class="fl" id="cNameLbl">KART SAHİBİ</label><input class="fi" type="text" placeholder="Ad Soyad" id="cName" oninput="updCC()"></div>
+          <div class="fg"><label class="fl" id="cNumLbl">KART NUMARASI</label><input class="fi" type="text" placeholder="0000 0000 0000 0000" maxlength="19" id="cNum" oninput="fmtNum(this);updCC()"></div>
+          <div class="row g-3 mb-3"><div class="col-6"><label class="fl" id="cExpLbl">SON KULLANMA</label><input class="fi" type="text" placeholder="AA/YY" maxlength="5" id="cExp" oninput="fmtExp(this);updCC()"></div><div class="col-6"><label class="fl">CVV</label><input class="fi" type="text" placeholder="•••" maxlength="3" id="cCvv"></div></div>
+          <div class="hi mb-4" style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:var(--t3);" id="payAmtLbl">Ödenecek Tutar</span><span style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:900;color:var(--warn);" id="payAmt">0 ₺</span></div>
+          <button class="btn-main" id="payNowBtn" onclick="doPay()"><i class="bi bi-lock-fill" style="margin-right:8px;"></i><span id="payNowTxt">Güvenli Öde</span></button>
+        </div></div>
+        <div class="col-lg-6"><div class="gc">
+          <div class="sec-t"><i class="bi bi-receipt" style="color:var(--ia);"></i><span id="paySumTitle">Ödeme Özeti</span></div>
+          <div id="paySummary"></div>
+          <hr class="divider">
+          <div style="display:flex;align-items:center;gap:7px;color:var(--ok);margin-bottom:8px;font-size:12px;font-weight:600;"><i class="bi bi-shield-check"></i><span id="sslTxt">256-bit SSL şifreli güvenli ödeme</span></div>
+          <div style="display:flex;align-items:center;gap:7px;color:var(--t3);font-size:12px;"><i class="bi bi-credit-card-2-front"></i><span id="cardsTxt">Visa, Mastercard, Troy kabul edilir</span></div>
+        </div></div>
+      </div>
+    </div>
+
+<div class="pg" id="pg-residents-admin">
+  <div class="pg-head">
+    <div class="eyebrow">SAKİN YÖNETİMİ</div>
+    <div class="pg-title">Sakinler</div>
+    <div class="pg-sub">
+      Site sakinlerini görüntüleyin ve aidat durumlarını takip edin
+    </div>
+  </div>
+
+  <div id="residentsAdmin"></div>
+</div>
+
+    <!-- SİTE YÖNETİMİ -->
+    <div class="pg" id="pg-site-admin">
+      <div class="pg-head"><div class="eyebrow" id="eyeSite">PLATFORM</div><div class="pg-title" id="titleSite">Site Yönetimi</div><div class="pg-sub" id="subSite">Sistemdeki tüm apartman ve siteler</div></div>
+      <div id="siteList"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODALLAR -->
+<div class="mo" id="mAnn">
+  <div class="mb">
+    <button class="mc" onclick="closeM('mAnn')"><i class="bi bi-x"></i></button>
+    <div class="mb-t" id="mAnnTitle">Yeni Duyuru</div>
+    <div class="fg"><label class="fl" id="mAnnTLbl">BAŞLIK</label><input class="fi" type="text" id="mAnnT" placeholder="Duyuru başlığı..."></div>
+    <div class="fg"><label class="fl" id="mAnnCLbl">KATEGORİ</label><select class="fi" id="mAnnC"><option>Genel</option><option>Bakım</option><option>Toplantı</option><option>Acil</option></select></div>
+    <div class="fg" style="margin-bottom:22px;"><label class="fl" id="mAnnBLbl">İÇERİK</label><textarea class="fi" id="mAnnB" placeholder="Duyuru içeriğini yazın..."></textarea></div>
+    <div class="d-flex gap-2 justify-content-end">
+      <button class="btn-g" id="mAnnCancel" onclick="closeM('mAnn')">İptal</button>
+      <button class="btn-a" id="mAnnSubmit" onclick="createAnn()"><i class="bi bi-send"></i> <span id="mAnnSubmitTxt">Paylaş</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mFault">
+  <div class="mb">
+    <button class="mc" onclick="closeM('mFault')"><i class="bi bi-x"></i></button>
+    <div class="mb-t" id="mFaultTitle">Arıza Bildir</div>
+    <div class="fg"><label class="fl" id="mFTLbl">ARIZA TÜRÜ</label><select class="fi" id="mFT"><option>Elektrik</option><option>Su / Tesisat</option><option>Asansör</option><option>Isıtma</option><option>Ortak Alan</option><option>Diğer</option></select></div>
+    <div class="fg"><label class="fl" id="mFDLbl">AÇIKLAMA</label><textarea class="fi" id="mFD" placeholder="Arızayı detaylıca açıklayın..."></textarea></div>
+    <div class="fg" style="margin-bottom:22px;"><label class="fl" id="mFPLbl">ÖNCELİK</label><select class="fi" id="mFP"><option>Düşük</option><option>Orta</option><option>Yüksek</option><option>Acil</option></select></div>
+    <div class="d-flex gap-2 justify-content-end">
+      <button class="btn-g" id="mFCancel" onclick="closeM('mFault')">İptal</button>
+      <button class="btn-a" id="mFSubmit" onclick="createFault()"><i class="bi bi-exclamation-triangle"></i> <span id="mFSubmitTxt">Bildir</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mReply">
+  <div class="mb">
+    <button class="mc" onclick="closeM('mReply')"><i class="bi bi-x"></i></button>
+    <div class="mb-t" id="mRTitle">Yanıt Yaz</div>
+    <input type="hidden" id="rAnnId"><input type="hidden" id="rCmId">
+    <div class="fg" style="margin-bottom:22px;"><label class="fl" id="mRLbl">YANITINIZ</label><textarea class="fi" id="rTxt" placeholder="Yanıtınızı yazın..."></textarea></div>
+    <div class="d-flex gap-2 justify-content-end">
+      <button class="btn-g" id="mRCancel" onclick="closeM('mReply')">İptal</button>
+      <button class="btn-a" id="mRSubmit" onclick="doReply()"><i class="bi bi-reply"></i> <span id="mRSubmitTxt">Yanıtla</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mCom">
+  <div class="mb">
+    <button class="mc" onclick="closeM('mCom')"><i class="bi bi-x"></i></button>
+    <div class="mb-t" id="mCTitle">Yorum Yap</div>
+    <input type="hidden" id="cAnnId">
+    <div class="fg" style="margin-bottom:22px;"><label class="fl" id="mCLbl">YORUMUNUZ</label><textarea class="fi" id="cTxt" placeholder="Görüşünüzü paylaşın..."></textarea></div>
+    <div class="d-flex gap-2 justify-content-end">
+      <button class="btn-g" id="mCCancel" onclick="closeM('mCom')">İptal</button>
+      <button class="btn-a" id="mCSubmit" onclick="doComment()"><i class="bi bi-chat-dots"></i> <span id="mCSubmitTxt">Yorum Yap</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mForgotPass">
+  <div class="mb">
+    <button class="mc" onclick="closeM('mForgotPass')"><i class="bi bi-x"></i></button>
+    <div class="mb-t">Şifremi Unuttum</div>
+
+    <div class="fg">
+      <label class="fl">E-POSTA</label>
+      <input class="fi" type="email" id="fpEmail">
+    </div>
+
+    <div class="fg">
+      <label class="fl">YENİ ŞİFRE</label>
+      <input class="fi" type="password" id="fpNewPass">
+    </div>
+
+    <div class="fg">
+      <label class="fl">YENİ ŞİFRE TEKRAR</label>
+      <input class="fi" type="password" id="fpNewPass2">
+    </div>
+
+    <button class="btn-main" onclick="forgotPassword()">
+      Şifreyi Yenile
+    </button>
+  </div>
+</div>
+
+<div class="mo" id="mChangePass">
+  <div class="mb">
+    <button class="mc" onclick="closeM('mChangePass')"><i class="bi bi-x"></i></button>
+    <div class="mb-t">Şifre Değiştir</div>
+
+    <div class="fg">
+      <label class="fl">MEVCUT ŞİFRE</label>
+      <input class="fi" type="password" id="oldPass">
+    </div>
+
+    <div class="fg">
+      <label class="fl">YENİ ŞİFRE</label>
+      <input class="fi" type="password" id="newPass">
+    </div>
+
+    <div class="fg">
+      <label class="fl">YENİ ŞİFRE TEKRAR</label>
+      <input class="fi" type="password" id="newPass2">
+    </div>
+
+    <button class="btn-main" onclick="changePassword()">
+      Şifreyi Güncelle
+    </button>
+  </div>
+</div>
+
+
+<div class="mo" id="mDeleteResident">
+  <div class="mb">
+    <div class="modal-title">⚠ Sakin Sil</div>
+
+    <p style="color:var(--t2);margin-bottom:12px;">
+      Bu işlem geri alınamaz.
+    </p>
+
+    <p style="font-size:12px;color:var(--warn);">
+      Silme işlemini onaylamak için:
+      <b>Evet silmek istediğime eminim</b>
+      yazın.
+    </p>
+
+    <input
+      id="deleteConfirmText"
+      class="fi"
+      type="text"
+      oninput="checkDeleteConfirm()">
+
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button class="btn-g" onclick="closeM('mDeleteResident')">
+        Vazgeç
+      </button>
+
+      <button
+        id="btnDeleteResident"
+        class="btn-no"
+        disabled
+        onclick="confirmDeleteResident()">
+        Sil
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TR = {
+  tagline:"Apartman & Site Yönetim Platformu",
+  loginTab:"Giriş Yap", regTab:"Kayıt Ol",
+  roleAdmin:"Yönetici", roleRes:"Sakin",
+  emailLbl:"E-POSTA", passLbl:"ŞİFRE",
+  loginBtn:"Giriş Yap", regBtn:"Kayıt Ol",
+  demoHint:"Hoşgeldiniz! Rolünüzü seçip giriş yapınız.",
+  regHint:"Kayıt sonrası otomatik giriş yapılır",
+  siteOpt:"SİTE SEÇENEĞI", joinSite:"Mevcut Siteye Katıl", newSite:"Yeni Site Kur",
+  daireLbl:"DAİRE NO", nameLbl:"AD SOYAD",
+  logoutTxt:"Çıkış Yap", sbTag:"Site Yönetimi",
+  navDash:"Kontrol Paneli", navAnn:"Duyurular", navFault:"Arıza Yönetimi",
+  navFaultR:"Arıza Taleplerim", navVote:"Yönetici Oylaması",
+  navAidat:"Aidat Yönetimi", navAidatR:"Aidat Ödemelerim", navSite:"Site Yönetimi",
+  secAna:"ANA", secYonetim:"YÖNETİM", secIslemler:"İŞLEMLER",
+  eyeAnnA:"YAYIN & İLETİŞİM", titleAnnA:"Duyuru Yönetimi", subAnnA:"Duyuru paylaşın ve yorumları yönetin", newAnnBtn:"Yeni Duyuru",
+  eyeAnnR:"HABERLER", titleAnnR:"Duyurular", subAnnR:"Güncel site duyuruları",
+  eyeFaultA:"TEKNİK SERVİS", titleFaultA:"Arıza Yönetimi", subFaultA:"Bildirilen arızaları görüntüleyin ve yönetin",
+  eyeFaultR:"TEKNİK DESTEK", titleFaultR:"Arıza Taleplerim", subFaultR:"Arıza bildirin ve durumunu takip edin", newFaultBtn:"Arıza Bildir",
+  fTotalLbl:"Toplam Arıza", fPendLbl:"Beklemede", fDoneLbl:"Çözüldü",
+  eyeVote:"DEMOKRATİK SEÇİM", titleVote:"Yönetici Oylaması", subVote:"Site yöneticisi seçimi — 2026",
+  voteElection:"Yönetici Seçimi — 2026", voteRule:"Kendinize oy veremezsiniz. Her kullanıcı yalnızca bir kez oy kullanabilir.",
+  voteActive:"Aktif", voteResults:"Anlık Sonuçlar", voteLbl:"oy", votedLbl:"Oylandı",
+  eyeAidatA:"FİNANS & TAKİP", titleAidatA:"Aidat Yönetimi", subAidatA:"Tüm sakinlerin 2026 aidat durumu",
+  eyeAidatR:"ÖDEME TAKİBİ", titleAidatR:"Aidat Ödemelerim", subAidatR:"2026 yılı aidat durumunuz",
+  paidMLbl:"Ödenen Ay", unpaidMLbl:"Ödenmeyen Ay", debtTotLbl:"Toplam Borç (Faizli)",
+  aidatYr:"2026 Yılı Aidat Durumu", debtDetail:"Borç Detayı", payDebtBtn:"Borcumu Öde",
+  eyePay:"GÜVENLİ ÖDEME", titlePay:"Aidat Ödemesi",
+  ccHolder:"Kart Sahibi", ccExp:"Son Kullanma", cNameLbl:"KART SAHİBİ", cNumLbl:"KART NUMARASI", cExpLbl:"SON KULLANMA",
+  payAmtLbl:"Ödenecek Tutar", payNow:"Güvenli Öde", paySumTitle:"Ödeme Özeti",
+  sslTxt:"256-bit SSL şifreli güvenli ödeme", cardsTxt:"Visa, Mastercard, Troy kabul edilir",
+  eyeSite:"PLATFORM", titleSite:"Site Yönetimi", subSite:"Sistemdeki tüm apartman ve siteler",
+  mAnnTitle:"Yeni Duyuru", mAnnTLbl:"BAŞLIK", mAnnCLbl:"KATEGORİ", mAnnBLbl:"İÇERİK",
+  mFaultTitle:"Arıza Bildir", mFTLbl:"ARIZA TÜRÜ", mFDLbl:"AÇIKLAMA", mFPLbl:"ÖNCELİK",
+  mRTitle:"Yanıt Yaz", mRLbl:"YANITINIZ",
+  mCTitle:"Yorum Yap", mCLbl:"YORUMUNUZ",
+  cancel:"İptal", publish:"Paylaş", submit:"Bildir", replyBtn:"Yanıtla", comBtn:"Yorum Yap",
+  waiting:"Beklemede", inProg:"İşlemde", solved:"Çözüldü",
+  markSolved:"Çözüldü İşaretle", takeAction:"İşleme Al",
+  myFaults:"Benim Arıza Taleplerim", allFaults:"Tüm Arıza Bildirimleri",
+  noFaults:"Henüz arıza talebiniz bulunmuyor.",
+  paidLabel:"Ödendi", unpaidLabel:"Ödenmedi",
+  monthCol:"Ay", feeCol:"Aidat", delayCol:"Gecikme", intCol:"Faiz (%1/gün)", totCol:"Toplam",
+  debtRow:"Toplam Borç", totalLbl:"Toplam",
+  yourSite:"Sizin Siteniz", residentLbl:"Sakin", adminLbl:"Yönetici",
+  welcome:"Merhaba", totalRes:"Toplam Sakin", pendFaults:"Bekleyen Arıza",
+  activeAnn:"Aktif Duyuru", allPaid:"Tüm Ayları Ödeyen",
+  faultStatus:"Arıza Durumları", aidatRate:"Aidat Ödeme Oranı",
+  recentFaults:"Son Arızalar", recentAnn:"Son Duyurular",
+  aidatOverview:"2026 Aidat Genel Bakış", myFaultsLbl:"Arıza Taleplerim",
+  errLogin:"Hatalı e-posta, şifre veya rol!", errFill:"Lütfen tüm alanları doldurun",
+  errPassShort:"Şifre en az 6 karakter olmalı", errEmailDup:"Bu e-posta zaten kayıtlı",
+  errSiteReq:"Lütfen bir site seçin", errSiteName:"Site adı zorunlu",
+  errSiteMode:"Lütfen site seçeneği belirleyin",
+  okReg:"Kayıt başarılı! Hoş geldiniz, ", okAnn:"Duyuru paylaşıldı!", delAnn:"Duyuru silindi",
+  okCm:"Yorumunuz eklendi", delCm:"Yorum silindi", okRep:"Yanıtınız eklendi",
+  okFault:"Arıza talebiniz iletildi!", delFault:"Arıza silindi", stUpd:"Durum güncellendi: ",
+  voteSelf:"Kendinize oy veremezsiniz!", voteDup:"Zaten oy kullandınız!", voteOk:"Oyunuz kaydedildi!",
+  banned:'⚠️ Uygunsuz ifade: "', empty:"Boş olamaz",
+  payFill:"Lütfen kart bilgilerini doldurun", paying:"Ödeme işleniyor...", payOk:"Ödeme tamamlandı! 🎉",
+  eyeDash:"GENEL BAKIŞ", dashTitle:"Kontrol Paneli"
+};
+const EN = {
+  tagline:"Apartment & Site Management Platform",
+  loginTab:"Sign In", regTab:"Register",
+  roleAdmin:"Manager", roleRes:"Resident",
+  emailLbl:"EMAIL", passLbl:"PASSWORD",
+  loginBtn:"Sign In", regBtn:"Register",
+  demoHint:"Welcome! Choose your role and log in.",
+  regHint:"Auto sign-in after registration",
+  siteOpt:"SITE OPTION", joinSite:"Join Existing Site", newSite:"Create New Site",
+  daireLbl:"APARTMENT NO", nameLbl:"FULL NAME",
+  logoutTxt:"Sign Out", sbTag:"Site Mgmt.",
+  navDash:"Dashboard", navAnn:"Announcements", navFault:"Fault Management",
+  navFaultR:"My Fault Reports", navVote:"Manager Election",
+  navAidat:"Fee Management", navAidatR:"My Fees", navSite:"Site Management",
+  secAna:"MAIN", secYonetim:"MANAGEMENT", secIslemler:"OPERATIONS",
+  eyeAnnA:"COMMUNICATION", titleAnnA:"Announcement Management", subAnnA:"Publish announcements and manage comments", newAnnBtn:"New Announcement",
+  eyeAnnR:"NEWS", titleAnnR:"Announcements", subAnnR:"Latest site announcements",
+  eyeFaultA:"TECHNICAL", titleFaultA:"Fault Management", subFaultA:"View and manage reported faults",
+  eyeFaultR:"SUPPORT", titleFaultR:"My Fault Reports", subFaultR:"Report faults and track their status", newFaultBtn:"Report Fault",
+  fTotalLbl:"Total Faults", fPendLbl:"Pending", fDoneLbl:"Resolved",
+  eyeVote:"ELECTION", titleVote:"Manager Election", subVote:"Site manager election — 2026",
+  voteElection:"Manager Election — 2026", voteRule:"You cannot vote for yourself. Each user may only vote once.",
+  voteActive:"Active", voteResults:"Live Results", voteLbl:"votes", votedLbl:"Voted",
+  eyeAidatA:"FINANCE", titleAidatA:"Fee Management", subAidatA:"2026 fee status for all residents",
+  eyeAidatR:"PAYMENTS", titleAidatR:"My Fees", subAidatR:"Your 2026 fee status",
+  paidMLbl:"Paid Months", unpaidMLbl:"Unpaid Months", debtTotLbl:"Total Debt (with interest)",
+  aidatYr:"2026 Fee Status", debtDetail:"Debt Details", payDebtBtn:"Pay My Debt",
+  eyePay:"SECURE PAYMENT", titlePay:"Fee Payment",
+  ccHolder:"Cardholder", ccExp:"Expiry Date", cNameLbl:"CARDHOLDER", cNumLbl:"CARD NUMBER", cExpLbl:"EXPIRY DATE",
+  payAmtLbl:"Amount Due", payNow:"Pay Securely", paySumTitle:"Payment Summary",
+  sslTxt:"256-bit SSL encrypted secure payment", cardsTxt:"Visa, Mastercard, Troy accepted",
+  eyeSite:"PLATFORM", titleSite:"Site Management", subSite:"All buildings in the system",
+  mAnnTitle:"New Announcement", mAnnTLbl:"TITLE", mAnnCLbl:"CATEGORY", mAnnBLbl:"CONTENT",
+  mFaultTitle:"Report Fault", mFTLbl:"FAULT TYPE", mFDLbl:"DESCRIPTION", mFPLbl:"PRIORITY",
+  mRTitle:"Write Reply", mRLbl:"YOUR REPLY",
+  mCTitle:"Write Comment", mCLbl:"YOUR COMMENT",
+  cancel:"Cancel", publish:"Publish", submit:"Submit", replyBtn:"Reply", comBtn:"Comment",
+  waiting:"Pending", inProg:"In Progress", solved:"Resolved",
+  markSolved:"Mark Resolved", takeAction:"Take Action",
+  myFaults:"My Fault Reports", allFaults:"All Fault Reports",
+  noFaults:"No fault reports yet.",
+  paidLabel:"Paid", unpaidLabel:"Unpaid",
+  monthCol:"Month", feeCol:"Fee", delayCol:"Delay", intCol:"Interest (1%/day)", totCol:"Total",
+  debtRow:"Total Debt", totalLbl:"Total",
+  yourSite:"Your Site", residentLbl:"Resident", adminLbl:"Manager",
+  welcome:"Welcome", totalRes:"Total Residents", pendFaults:"Pending Faults",
+  activeAnn:"Active Announcements", allPaid:"Fully Paid",
+  faultStatus:"Fault Status", aidatRate:"Payment Rate",
+  recentFaults:"Recent Faults", recentAnn:"Recent Announcements",
+  aidatOverview:"2026 Fee Overview", myFaultsLbl:"My Fault Reports",
+  errLogin:"Incorrect email, password or role!", errFill:"Please fill in all fields",
+  errPassShort:"Password must be at least 6 characters", errEmailDup:"This email is already registered",
+  errSiteReq:"Please select a site", errSiteName:"Site name is required",
+  errSiteMode:"Please select a site option",
+  okReg:"Registered! Welcome, ", okAnn:"Announcement published!", delAnn:"Announcement deleted",
+  okCm:"Comment added", delCm:"Comment deleted", okRep:"Reply added",
+  okFault:"Fault report submitted!", delFault:"Fault deleted", stUpd:"Status updated: ",
+  voteSelf:"You cannot vote for yourself!", voteDup:"You have already voted!", voteOk:"Vote recorded!",
+  banned:'⚠️ Inappropriate content: "', empty:"Cannot be empty",
+  payFill:"Please fill in all card details", paying:"Processing payment...", payOk:"Payment completed! 🎉",
+  eyeDash:"OVERVIEW", dashTitle:"Dashboard"
+};
+const DE = {
+  tagline:"Intelligentes Gebäudemanagementsystem",
+  loginTab:"Anmelden", regTab:"Registrieren",
+  roleAdmin:"Verwalter", roleRes:"Bewohner",
+  emailLbl:"E-MAIL", passLbl:"PASSWORT",
+  loginBtn:"Anmelden", regBtn:"Registrieren",
+  demoHint:"Demo: admin@mail.com / admin123",
+  regHint:"Auto-Login nach Registrierung",
+  siteOpt:"GEBÄUDE OPTION", joinSite:"Vorhandenem beitreten", newSite:"Neue Anlage",
+  daireLbl:"WOHNUNGSNR.", nameLbl:"VOLLSTÄNDIGER NAME",
+  logoutTxt:"Abmelden", sbTag:"Gebäudeverwaltung",
+  navDash:"Dashboard", navAnn:"Ankündigungen", navFault:"Störungsverwaltung",
+  navFaultR:"Meine Störungen", navVote:"Verwalterwald",
+  navAidat:"Gebühren", navAidatR:"Meine Gebühren", navSite:"Anlageverwaltung",
+  secAna:"HAUPT", secYonetim:"VERWALTUNG", secIslemler:"OPERATIONEN",
+  eyeAnnA:"KOMMUNIKATION", titleAnnA:"Ankündigungsverwaltung", subAnnA:"Ankündigungen veröffentlichen und Kommentare verwalten", newAnnBtn:"Neue Ankündigung",
+  eyeAnnR:"NACHRICHTEN", titleAnnR:"Ankündigungen", subAnnR:"Aktuelle Ankündigungen",
+  eyeFaultA:"TECHNIK", titleFaultA:"Störungsverwaltung", subFaultA:"Gemeldete Störungen anzeigen und verwalten",
+  eyeFaultR:"SUPPORT", titleFaultR:"Meine Störungen", subFaultR:"Störungen melden und verfolgen", newFaultBtn:"Störung melden",
+  fTotalLbl:"Störungen gesamt", fPendLbl:"Ausstehend", fDoneLbl:"Behoben",
+  eyeVote:"WAHL", titleVote:"Verwalterwald", subVote:"Verwalterwald — 2026",
+  voteElection:"Verwalterwald — 2026", voteRule:"Sie können nicht für sich selbst stimmen.",
+  voteActive:"Aktiv", voteResults:"Live-Ergebnisse", voteLbl:"Stimmen", votedLbl:"Abgestimmt",
+  eyeAidatA:"FINANZEN", titleAidatA:"Gebührenverwaltung", subAidatA:"Gebührenstatus 2026 aller Bewohner",
+  eyeAidatR:"ZAHLUNGEN", titleAidatR:"Meine Gebühren", subAidatR:"Ihr Gebührenstatus 2026",
+  paidMLbl:"Bezahlte Monate", unpaidMLbl:"Unbezahlte Monate", debtTotLbl:"Gesamtschuld (mit Zinsen)",
+  aidatYr:"Gebührenstatus 2026", debtDetail:"Schuldendetails", payDebtBtn:"Schulden bezahlen",
+  eyePay:"SICHERE ZAHLUNG", titlePay:"Gebührenzahlung",
+  ccHolder:"Karteninhaber", ccExp:"Ablaufdatum", cNameLbl:"KARTENINHABER", cNumLbl:"KARTENNUMMER", cExpLbl:"ABLAUFDATUM",
+  payAmtLbl:"Fälliger Betrag", payNow:"Sicher bezahlen", paySumTitle:"Zahlungsübersicht",
+  sslTxt:"256-Bit SSL verschlüsselte sichere Zahlung", cardsTxt:"Visa, Mastercard, Troy akzeptiert",
+  eyeSite:"PLATTFORM", titleSite:"Anlageverwaltung", subSite:"Alle Gebäude im System",
+  mAnnTitle:"Neue Ankündigung", mAnnTLbl:"TITEL", mAnnCLbl:"KATEGORIE", mAnnBLbl:"INHALT",
+  mFaultTitle:"Störung melden", mFTLbl:"STÖRUNGSTYP", mFDLbl:"BESCHREIBUNG", mFPLbl:"PRIORITÄT",
+  mRTitle:"Antwort schreiben", mRLbl:"IHRE ANTWORT",
+  mCTitle:"Kommentar schreiben", mCLbl:"IHR KOMMENTAR",
+  cancel:"Abbrechen", publish:"Veröffentlichen", submit:"Einreichen", replyBtn:"Antworten", comBtn:"Kommentieren",
+  waiting:"Ausstehend", inProg:"In Bearbeitung", solved:"Behoben",
+  markSolved:"Als behoben markieren", takeAction:"Bearbeiten",
+  myFaults:"Meine Störungsmeldungen", allFaults:"Alle Störungsmeldungen",
+  noFaults:"Noch keine Störungsmeldungen.",
+  paidLabel:"Bezahlt", unpaidLabel:"Nicht bezahlt",
+  monthCol:"Monat", feeCol:"Gebühr", delayCol:"Verzögerung", intCol:"Zinsen (1%/Tag)", totCol:"Gesamt",
+  debtRow:"Gesamtschuld", totalLbl:"Gesamt",
+  yourSite:"Ihre Anlage", residentLbl:"Bewohner", adminLbl:"Verwalter",
+  welcome:"Hallo", totalRes:"Bewohner gesamt", pendFaults:"Ausstehende Störungen",
+  activeAnn:"Aktive Ankündigungen", allPaid:"Vollständig bezahlt",
+  faultStatus:"Störungsstatus", aidatRate:"Zahlungsrate",
+  recentFaults:"Aktuelle Störungen", recentAnn:"Aktuelle Ankündigungen",
+  aidatOverview:"Gebührenübersicht 2026", myFaultsLbl:"Meine Störungen",
+  errLogin:"Falsche E-Mail, Passwort oder Rolle!", errFill:"Bitte alle Felder ausfüllen",
+  errPassShort:"Passwort muss mindestens 6 Zeichen haben", errEmailDup:"Diese E-Mail ist bereits registriert",
+  errSiteReq:"Bitte eine Anlage auswählen", errSiteName:"Anlagenname ist erforderlich",
+  errSiteMode:"Bitte Anlage-Option wählen",
+  okReg:"Registriert! Willkommen, ", okAnn:"Ankündigung veröffentlicht!", delAnn:"Ankündigung gelöscht",
+  okCm:"Kommentar hinzugefügt", delCm:"Kommentar gelöscht", okRep:"Antwort hinzugefügt",
+  okFault:"Störungsmeldung eingereicht!", delFault:"Störung gelöscht", stUpd:"Status aktualisiert: ",
+  voteSelf:"Sie können nicht für sich selbst stimmen!", voteDup:"Bereits abgestimmt!", voteOk:"Stimme erfasst!",
+  banned:'⚠️ Unangemessener Inhalt: "', empty:"Darf nicht leer sein",
+  payFill:"Bitte alle Kartendetails ausfüllen", paying:"Zahlung wird verarbeitet...", payOk:"Zahlung erfolgreich! 🎉",
+  eyeDash:"ÜBERSICHT", dashTitle:"Dashboard"
+};
+const AR = {
+  tagline:"منصة إدارة المباني والمجمعات الذكية",
+  loginTab:"تسجيل الدخول", regTab:"إنشاء حساب",
+  roleAdmin:"مدير", roleRes:"ساكن",
+  emailLbl:"البريد الإلكتروني", passLbl:"كلمة المرور",
+  loginBtn:"تسجيل الدخول", regBtn:"إنشاء حساب",
+  demoHint:"تجريبي: admin@mail.com / admin123",
+  regHint:"تسجيل دخول تلقائي بعد التسجيل",
+  siteOpt:"خيار الموقع", joinSite:"الانضمام لموقع موجود", newSite:"إنشاء موقع جديد",
+  daireLbl:"رقم الشقة", nameLbl:"الاسم الكامل",
+  logoutTxt:"تسجيل الخروج", sbTag:"إدارة المباني",
+  navDash:"لوحة التحكم", navAnn:"الإعلانات", navFault:"إدارة الأعطال",
+  navFaultR:"طلبات الأعطال", navVote:"انتخاب المدير",
+  navAidat:"رسوم الصيانة", navAidatR:"رسومي", navSite:"إدارة المواقع",
+  secAna:"الرئيسية", secYonetim:"الإدارة", secIslemler:"العمليات",
+  eyeAnnA:"التواصل", titleAnnA:"إدارة الإعلانات", subAnnA:"نشر الإعلانات وإدارة التعليقات", newAnnBtn:"إعلان جديد",
+  eyeAnnR:"الأخبار", titleAnnR:"الإعلانات", subAnnR:"أحدث إعلانات الموقع",
+  eyeFaultA:"الخدمة الفنية", titleFaultA:"إدارة الأعطال", subFaultA:"عرض الأعطال وإدارتها",
+  eyeFaultR:"الدعم", titleFaultR:"طلبات الأعطال", subFaultR:"الإبلاغ عن الأعطال ومتابعتها", newFaultBtn:"الإبلاغ عن عطل",
+  fTotalLbl:"إجمالي الأعطال", fPendLbl:"قيد الانتظار", fDoneLbl:"تم الحل",
+  eyeVote:"الانتخاب", titleVote:"انتخاب المدير", subVote:"انتخاب مدير الموقع — 2026",
+  voteElection:"انتخاب المدير — 2026", voteRule:"لا يمكنك التصويت لنفسك. يحق لكل مستخدم التصويت مرة واحدة فقط.",
+  voteActive:"نشط", voteResults:"النتائج المباشرة", voteLbl:"أصوات", votedLbl:"صوّت",
+  eyeAidatA:"المالية", titleAidatA:"رسوم الصيانة", subAidatA:"حالة رسوم 2026 لجميع السكان",
+  eyeAidatR:"المدفوعات", titleAidatR:"رسومي", subAidatR:"حالة رسوم 2026 الخاصة بك",
+  paidMLbl:"الأشهر المدفوعة", unpaidMLbl:"الأشهر غير المدفوعة", debtTotLbl:"إجمالي الديون",
+  aidatYr:"حالة رسوم 2026", debtDetail:"تفاصيل الدين", payDebtBtn:"دفع ديني",
+  eyePay:"دفع آمن", titlePay:"دفع الرسوم",
+  ccHolder:"اسم حامل البطاقة", ccExp:"تاريخ الانتهاء", cNameLbl:"اسم حامل البطاقة", cNumLbl:"رقم البطاقة", cExpLbl:"تاريخ الانتهاء",
+  payAmtLbl:"المبلغ المستحق", payNow:"دفع آمن", paySumTitle:"ملخص الدفع",
+  sslTxt:"دفع آمن مشفر بـ 256-bit SSL", cardsTxt:"Visa وMastercard مقبولان",
+  eyeSite:"المنصة", titleSite:"إدارة المواقع", subSite:"جميع المباني في النظام",
+  mAnnTitle:"إعلان جديد", mAnnTLbl:"العنوان", mAnnCLbl:"الفئة", mAnnBLbl:"المحتوى",
+  mFaultTitle:"الإبلاغ عن عطل", mFTLbl:"نوع العطل", mFDLbl:"الوصف", mFPLbl:"الأولوية",
+  mRTitle:"كتابة رد", mRLbl:"ردك",
+  mCTitle:"كتابة تعليق", mCLbl:"تعليقك",
+  cancel:"إلغاء", publish:"نشر", submit:"إرسال", replyBtn:"رد", comBtn:"تعليق",
+  waiting:"قيد الانتظار", inProg:"قيد المعالجة", solved:"تم الحل",
+  markSolved:"تحديد كمحلول", takeAction:"معالجة",
+  myFaults:"طلبات أعطالي", allFaults:"جميع الأعطال",
+  noFaults:"لا توجد طلبات أعطال بعد.",
+  paidLabel:"مدفوع", unpaidLabel:"غير مدفوع",
+  monthCol:"الشهر", feeCol:"الرسوم", delayCol:"التأخير", intCol:"الفائدة (1%/يوم)", totCol:"المجموع",
+  debtRow:"إجمالي الدين", totalLbl:"المجموع",
+  yourSite:"موقعك", residentLbl:"ساكن", adminLbl:"مدير",
+  welcome:"مرحباً", totalRes:"إجمالي السكان", pendFaults:"الأعطال المعلقة",
+  activeAnn:"الإعلانات النشطة", allPaid:"المدفوعة بالكامل",
+  faultStatus:"حالة الأعطال", aidatRate:"معدل الدفع",
+  recentFaults:"أحدث الأعطال", recentAnn:"أحدث الإعلانات",
+  aidatOverview:"نظرة على رسوم 2026", myFaultsLbl:"أعطالي",
+  errLogin:"بريد إلكتروني أو كلمة مرور غير صحيح!", errFill:"يرجى ملء جميع الحقول",
+  errPassShort:"كلمة المرور يجب أن تكون 6 أحرف على الأقل", errEmailDup:"هذا البريد مسجل مسبقاً",
+  errSiteReq:"يرجى اختيار موقع", errSiteName:"اسم الموقع مطلوب",
+  errSiteMode:"يرجى اختيار خيار الموقع",
+  okReg:"تم التسجيل! أهلاً وسهلاً، ", okAnn:"تم نشر الإعلان!", delAnn:"تم حذف الإعلان",
+  okCm:"تمت إضافة التعليق", delCm:"تم حذف التعليق", okRep:"تمت إضافة الرد",
+  okFault:"تم إرسال تقرير العطل!", delFault:"تم حذف العطل", stUpd:"تم تحديث الحالة: ",
+  voteSelf:"لا يمكنك التصويت لنفسك!", voteDup:"لقد صوّتت بالفعل!", voteOk:"تم تسجيل صوتك!",
+  banned:'⚠️ محتوى غير لائق: "', empty:"لا يمكن أن يكون فارغاً",
+  payFill:"يرجى ملء بيانات البطاقة", paying:"جارٍ معالجة الدفع...", payOk:"تم الدفع بنجاح! 🎉",
+  eyeDash:"لوحة التحكم", dashTitle:"لوحة التحكم"
+};
+
+const LANGS = { tr: TR, en: EN, de: DE, ar: AR };
+let currentLang = 'tr';
+function L(k) { return (LANGS[currentLang] && LANGS[currentLang][k]) || TR[k] || k; }
+
+function applyLang() {
+  const lang = currentLang;
+  document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+  document.getElementById('langLbl').textContent = lang.toUpperCase();
+  document.querySelectorAll('.lang-opt').forEach((o,i) => o.classList.toggle('on', ['tr','en','de','ar'][i] === lang));
+
+  // Her ID'ye karşılık gelen çeviri key'i
+  const map = {
+    authTagline:'tagline', tabLogin:'loginTab', tabReg:'regTab',
+    lRATxt:'roleAdmin', lRBTxt:'roleRes', rRATxt:'roleAdmin', rRBTxt:'roleRes',
+    lEmailLbl:'emailLbl', lPassLbl:'passLbl', loginBtnTxt:'loginBtn',
+    demoHint:'demoHint', regHint:'regHint',
+    siteOptLbl:'siteOpt', joinTxt:'joinSite', newTxt:'newSite',
+    daireLbl:'daireLbl', nameLbl:'nameLbl',
+    rEmailLbl:'emailLbl', rPassLbl:'passLbl', regBtnTxt:'regBtn',
+    logoutTxt:'logoutTxt', sbTag:'sbTag',
+    eyeAnnA:'eyeAnnA', titleAnnA:'titleAnnA', subAnnA:'subAnnA', newAnnBtn:'newAnnBtn',
+    eyeAnnR:'eyeAnnR', titleAnnR:'titleAnnR', subAnnR:'subAnnR',
+    eyeFaultA:'eyeFaultA', titleFaultA:'titleFaultA', subFaultA:'subFaultA',
+    eyeFaultR:'eyeFaultR', titleFaultR:'titleFaultR', subFaultR:'subFaultR', newFaultBtn:'newFaultBtn',
+    fTotalLbl:'fTotalLbl', fPendLbl:'fPendLbl', fDoneLbl:'fDoneLbl',
+    eyeVote:'eyeVote', titleVote:'titleVote', subVote:'subVote',
+    voteElectionTitle:'voteElection', voteRule:'voteRule', voteActiveBadge:'voteActive', voteResultsTitle:'voteResults',
+    eyeAidatA:'eyeAidatA', titleAidatA:'titleAidatA', subAidatA:'subAidatA',
+    eyeAidatR:'eyeAidatR', titleAidatR:'titleAidatR', subAidatR:'subAidatR',
+    paidMLbl:'paidMLbl', unpaidMLbl:'unpaidMLbl', debtTotLbl:'debtTotLbl',
+    aidatYrTitle:'aidatYr', debtDetailTitle:'debtDetail', payDebtBtn:'payDebtBtn',
+    eyePay:'eyePay', titlePay:'titlePay',
+    ccHolderLbl:'ccHolder', ccExpLbl:'ccExp', cNameLbl:'cNameLbl', cNumLbl:'cNumLbl', cExpLbl:'cExpLbl',
+    payAmtLbl:'payAmtLbl', payNowTxt:'payNow', paySumTitle:'paySumTitle',
+    sslTxt:'sslTxt', cardsTxt:'cardsTxt',
+    eyeSite:'eyeSite', titleSite:'titleSite', subSite:'subSite',
+    mAnnTitle:'mAnnTitle', mAnnTLbl:'mAnnTLbl', mAnnCLbl:'mAnnCLbl', mAnnBLbl:'mAnnBLbl',
+    mAnnCancel:'cancel', mAnnSubmitTxt:'publish',
+    mFaultTitle:'mFaultTitle', mFTLbl:'mFTLbl', mFDLbl:'mFDLbl', mFPLbl:'mFPLbl',
+    mFCancel:'cancel', mFSubmitTxt:'submit',
+    mRTitle:'mRTitle', mRLbl:'mRLbl', mRCancel:'cancel', mRSubmitTxt:'replyBtn',
+    mCTitle:'mCTitle', mCLbl:'mCLbl', mCCancel:'cancel', mCSubmitTxt:'comBtn',
+    eyeDash:'eyeDash'
+  };
+
+  Object.keys(map).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = L(map[id]);
+  });
+
+  // Rebuild everything if logged in
+  if (CU) {
+    buildNav();
+    buildDash();
+    if (curPage === 'ann-admin')   renderAnnAdmin();
+    if (curPage === 'ann-sakin')   renderAnnRes();
+    if (curPage === 'fault-admin') renderFaultAdmin();
+    if (curPage === 'fault-sakin') renderFaultRes();
+    if (curPage === 'vote')        renderVote();
+    if (curPage === 'aidat-admin') renderAidatAdmin();
+    if (curPage === 'aidat-sakin') renderAidatRes();
+    if (curPage === 'site-admin')  renderSiteAdmin();
+  }
+}
+
+function toggleLang() { document.getElementById('langDD').classList.toggle('open'); }
+function setLang(l) { currentLang = l; document.getElementById('langDD').classList.remove('open'); applyLang(); }
+document.addEventListener('click', e => { if (!e.target.closest('.lang-wrap')) document.getElementById('langDD').classList.remove('open'); });
+
+// ─────────────────────────────────────────────────────────────
+// TEMA
+// ─────────────────────────────────────────────────────────────
+let isDark = true;
+function toggleTheme() {
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.getElementById('themeIco').className = isDark ? 'bi bi-moon-stars-fill' : 'bi bi-sun-fill';
+}
+
+// ─────────────────────────────────────────────────────────────
+// YASAKLI KELİMELER
+// ─────────────────────────────────────────────────────────────
+const BANNED_WORDS = ['salak','aptal','gerizekalı','hakaret','küfür','mal','orospu','bok','sik','piç','pic','amk','lanet','kahpe','ibne','göt',,'beyinsiz','dangalak'];
+function checkBanned(text) { const low = text.toLowerCase(); return BANNED_WORDS.find(w => low.includes(w)) || null; }
+
+// ─────────────────────────────────────────────────────────────
+// VERİ — apartman_db
+// ─────────────────────────────────────────────────────────────
+const FEE = 500;
+const DAILY_RATE = 0.01;
+const MONTHS = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+let sites = [];
+let nextSiteId = 2;
+
+let users = [];
+let nextUid = 102;
+
+let announcements = [];
+let annId = 6;
+
+let faults = [];
+let faultId = 6;
+
+// Tüm 100 sakin oy kullandı — DB poll verisi
+let votes = { 1: [] };
+
+
+// Aidat verileri — deterministik
+let aidatData = {};
+
+
+// ─────────────────────────────────────────────────────────────
+// DURUM DEĞİŞKENLERİ
+// ─────────────────────────────────────────────────────────────
+let CU = null;
+let selRoleVal = 'yonetici';
+let selRegRoleVal = 'yonetici';
+let siteModeVal = '';
+let curPage = 'dash';
+let vchart = null;
+
+// ─────────────────────────────────────────────────────────────
+// YARDIMCI FONKSİYONLAR
+// ─────────────────────────────────────────────────────────────
+function mySite()      { return sites.find(s => s.id === CU.siteId) || {name:'—',addr:'—'}; }
+function mySiteRes()   { return users.filter(u => u.role === 'sakin' && u.siteId === CU.siteId); }
+function myAnns()      { return announcements.filter(a => a.siteId === CU.siteId); }
+async function loadAnnouncements() {
+  try {
+    await loadUsers();
+
+    const res = await fetch(`http://localhost:8080/api/announcements?siteId=${CU.siteId}`);
+    const data = await res.json();
+
+    announcements = await Promise.all(
+      data.map(async a => {
+
+        const commentsData = await loadComments(a.id);
+
+        return {
+          id: a.id,
+          siteId: a.siteId,
+          title: a.title,
+          cat: 'Genel',
+          body: a.content,
+          date: a.createdAt ? a.createdAt.substring(0, 10) : '',
+          authorId: a.adminId,
+          author: 'Admin',
+
+          comments: commentsData.map(c => {
+            const commentUser = users.find(u => u.id === c.userId);
+
+            return {
+              id: c.id,
+              userId: c.userId,
+              userName: commentUser ? commentUser.name : 'Kullanıcı ' + c.userId,
+              text: c.comment,
+              replies: []
+            };
+          })
+        };
+      })
+    );
+
+  } catch (error) {
+    console.error(error);
+    toast('Duyurular yüklenemedi', 'no');
+  }
+}
+
+async function changePassword() {
+  const oldPassword = document.getElementById('oldPass').value;
+  const newPassword = document.getElementById('newPass').value;
+  const newPassword2 = document.getElementById('newPass2').value;
+
+  if (!oldPassword || !newPassword || !newPassword2) {
+    toast('Tüm alanları doldurun', 'no');
+    return;
+  }
+
+  if (newPassword.length < 6) {
+    toast('Yeni şifre en az 6 karakter olmalı', 'no');
+    return;
+  }
+
+  if (newPassword !== newPassword2) {
+    toast('Yeni şifreler eşleşmiyor', 'no');
+    return;
+  }
+
+  const res = await fetch(`http://localhost:8080/api/users/${CU.id}/change-password`, {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      oldPassword: oldPassword,
+      newPassword: newPassword
+    })
+  });
+
+  if (!res.ok) {
+    toast(await res.text(), 'no');
+    return;
+  }
+
+  closeM('mChangePass');
+  toast('Şifre başarıyla değiştirildi', 'ok');
+
+  document.getElementById('oldPass').value = '';
+  document.getElementById('newPass').value = '';
+  document.getElementById('newPass2').value = '';
+}
+
+
+async function forgotPassword() {
+  const email = document.getElementById('fpEmail').value.trim();
+  const newPassword = document.getElementById('fpNewPass').value;
+  const newPassword2 = document.getElementById('fpNewPass2').value;
+
+  if (!email || !newPassword || !newPassword2) {
+    toast('Tüm alanları doldurun', 'no');
+    return;
+  }
+
+  if (newPassword.length < 6) {
+    toast('Yeni şifre en az 6 karakter olmalı', 'no');
+    return;
+  }
+
+  if (newPassword !== newPassword2) {
+    toast('Şifreler eşleşmiyor', 'no');
+    return;
+  }
+
+  const res = await fetch('http://localhost:8080/api/users/forgot-password', {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      email: email,
+      newPassword: newPassword
+    })
+  });
+
+  if (!res.ok) {
+    toast(await res.text(), 'no');
+    return;
+  }
+
+  closeM('mForgotPass');
+
+  document.getElementById('fpEmail').value = '';
+  document.getElementById('fpNewPass').value = '';
+  document.getElementById('fpNewPass2').value = '';
+
+  toast('Şifre başarıyla yenilendi', 'ok');
+}
+
+async function loadComments(announcementId) {
+  try {
+    const res = await fetch(
+      `http://localhost:8080/api/announcement-comments/${announcementId}`
+    );
+
+    return await res.json();
+
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+async function loadFaults() {
+  try {
+    const res = await fetch(`http://localhost:8080/api/faults?siteId=${CU.siteId}`);
+    const data = await res.json();
+
+    faults = data.map(f => ({
+      id: f.id,
+      siteId: f.siteId,
+      type: f.title,
+      desc: f.description,
+      date: f.createdAt ? f.createdAt.substring(0, 10) : '',
+      userId: f.userId,
+      userName: 'Sakin',
+      priority: 'Orta',
+      status: f.status === 'open' ? 'Beklemede' :
+              f.status === 'in_progress' ? 'İşlemde' : 'Çözüldü'
+    }));
+
+  } catch (error) {
+    console.error(error);
+    toast('Arızalar yüklenemedi', 'no');
+  }
+}
+async function loadDues() {
+  try {
+    const res = await fetch(`http://localhost:8080/api/dues/${CU.id}`);
+    const data = await res.json();
+
+    aidatData[CU.id] = data
+      .filter(d => d.status === 'paid')
+      .map(d => d.month - 1);
+
+    window._backendDues = data;
+
+  } catch (error) {
+    console.error(error);
+    toast('Aidatlar yüklenemedi', 'no');
+  }
+}
+async function loadVoteData() {
+  try {
+    const pollRes = await fetch(`http://localhost:8080/api/polls?siteId=${CU.siteId}`);
+    const polls = await pollRes.json();
+
+    if (!polls.length) {
+      window._backendPoll = null;
+      window._backendPollOptions = [];
+      window._backendVotes = [];
+      return;
+    }
+
+    const poll = polls[0];
+    window._backendPoll = poll;
+
+    const optRes = await fetch(`http://localhost:8080/api/polls/${poll.id}/options`);
+    window._backendPollOptions = await optRes.json();
+
+    const voteRes = await fetch(`http://localhost:8080/api/polls/${poll.id}/votes`);
+    window._backendVotes = await voteRes.json();
+
+  } catch (error) {
+    console.error(error);
+    toast('Oylama verileri yüklenemedi', 'no');
+  }
+}
+async function loadSites() {
+  try {
+    const res = await fetch('http://localhost:8080/api/sites');
+    const data = await res.json();
+
+    sites = data.map(s => ({
+      id: s.id,
+      name: s.name,
+      addr: s.address,
+      phone: s.phone
+    }));
+
+  } catch (error) {
+    console.error(error);
+    toast('Siteler yüklenemedi', 'no');
+  }
+}
+async function loadUsers() {
+  try {
+    const res = await fetch('http://localhost:8080/api/users');
+    const data = await res.json();
+
+    users = data.map(u => ({
+  id: u.id,
+  siteId: u.siteId,
+  name: u.name,
+  email: u.email,
+  role: u.role === 'admin' ? 'yonetici' : 'sakin',
+  daire: u.apartmentNo,
+  createdAt: u.createdAt,
+  moveInMonth: u.moveInMonth
+}));
+
+  } catch (error) {
+    console.error(error);
+    toast('Kullanıcılar yüklenemedi', 'no');
+  }
+}
+
+let currentSiteInfo = null;
+
+async function loadCurrentSite() {
+  try {
+    const res = await fetch(`http://localhost:8080/api/sites/${CU.siteId}`);
+    currentSiteInfo = await res.json();
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function loadSiteDues() {
+  try {
+    const res = await fetch(`http://localhost:8080/api/dues/site/${CU.siteId}`);
+    const data = await res.json();
+
+    window._backendSiteDues = data;
+
+  } catch (error) {
+    console.error(error);
+    toast('Site aidatları yüklenemedi', 'no');
+  }
+}
+function myFaults()    { return faults.filter(f => f.siteId === CU.siteId); }
+function mySiteVotes() { return votes[CU.siteId] || []; }
+
+function SB(s) { return {Beklemede:'bx-no','İşlemde':'bx-warn','Çözüldü':'bx-ok'}[s]||'bx-neu'; }
+function LS(s) { return {Beklemede:L('waiting'),'İşlemde':L('inProg'),'Çözüldü':L('solved')}[s]||s; }
+function CB(c) { return {Genel:'bx-ind',Bakım:'bx-warn',Toplantı:'bx-info',Acil:'bx-no'}[c]||'bx-neu'; }
+function PB(p) { return {Düşük:'bx-info',Orta:'bx-warn',Yüksek:'bx-no',Acil:'bx-no'}[p]||'bx-neu'; }
+function FI(t) { return {Elektrik:'bi-lightning-charge','Su / Tesisat':'bi-droplet','Asansör':'bi-arrows-vertical','Isıtma':'bi-thermometer-half','Ortak Alan':'bi-building',Diğer:'bi-wrench'}[t]||'bi-tools'; }
+function TC()  { const d=document.documentElement.getAttribute('data-theme')==='dark'; return {tc:d?'#8fa3cc':'#64748b',gc:d?'rgba(255,255,255,.04)':'rgba(0,0,0,.04)'}; }
+
+function toast(msg, type) {
+  const ic = {ok:'bi-check-circle-fill',no:'bi-x-circle-fill',w:'bi-exclamation-triangle-fill'};
+  const cl = {ok:'var(--ok)',no:'var(--no)',w:'var(--warn)'};
+  const t = type || 'ok';
+  const el = document.createElement('div');
+  el.className = 'ti ti-' + t;
+  el.innerHTML = '<i class="bi ' + ic[t] + '" style="color:' + cl[t] + ';font-size:17px;flex-shrink:0;"></i><span>' + msg + '</span>';
+  document.getElementById('TC').appendChild(el);
+  setTimeout(() => { el.style.opacity='0'; el.style.transform='translateX(110%)'; el.style.transition='all .3s'; setTimeout(()=>el.remove(),300); }, 3200);
+}
+function openM(id)  { document.getElementById(id).classList.add('on'); }
+function closeM(id) { document.getElementById(id).classList.remove('on'); }
+document.addEventListener('click', e => { if (e.target.classList.contains('mo')) e.target.classList.remove('on'); });
+
+// ─────────────────────────────────────────────────────────────
+// AUTH
+// ─────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.getElementById('formLogin').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('formReg').style.display   = tab === 'register' ? 'block' : 'none';
+  document.getElementById('tabLogin').classList.toggle('on', tab === 'login');
+  document.getElementById('tabReg').classList.toggle('on', tab === 'register');
+}
+
+function selRole(r, el) {
+  selRoleVal = r;
+  document.querySelectorAll('#formLogin .role-btn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+}
+function selRegRole(r, el) {
+  selRegRoleVal = r;
+
+  document.querySelectorAll('#formReg .role-btn')
+    .forEach(b => b.classList.remove('on'));
+
+  el.classList.add('on');
+
+  document.getElementById('daireWrap').style.display =
+    r === 'sakin' ? 'block' : 'none';
+
+  document.getElementById('moveInWrap').style.display =
+    r === 'sakin' ? 'block' : 'none';
+
+  document.getElementById('siteCreateBox').style.display =
+    r === 'yonetici' ? 'block' : 'none';
+
+  document.getElementById('joinCodeBox').style.display =
+    r === 'sakin' ? 'block' : 'none';
+}
+
+
+function fillSiteSelect() {
+  const sel = document.getElementById('rSiteSelect');
+  sel.innerHTML = '<option value="">-- Site seçin --</option>';
+  sites.forEach(s => { const o=document.createElement('option'); o.value=s.id; o.textContent=s.name; sel.appendChild(o); });
+}
+
+async function doLogin() {
+  const email = document.getElementById('lEmail').value.trim();
+  const pass  = document.getElementById('lPass').value;
+
+  try {
+    const res = await fetch('http://localhost:8080/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+  email: email,
+  password: pass,
+  role: selRoleVal
+})
+    });
+
+    if (!res.ok) {
+      toast(L('errLogin'), 'no');
+      return;
+    }
+
+    const user = await res.json();
+
+   CU = {
+  id: user.id,
+  siteId: user.siteId,
+  name: user.name,
+  email: user.email,
+  moveInMonth: user.moveInMonth,
+  role: user.role === 'admin' ? 'yonetici' : 'sakin',
+  daire: user.apartmentNo,
+  createdAt: user.createdAt
+};
+    localStorage.setItem('apartixUser', JSON.stringify(CU));
+
+    startApp();
+
+  } catch (error) {
+    console.error(error);
+    toast('Backend bağlantısı kurulamadı', 'no');
+  }
+}
+async function doRegister() {
+  const name  = document.getElementById('rName').value.trim();
+  const email = document.getElementById('rEmail').value.trim();
+  const pass  = document.getElementById('rPass').value;
+
+  const daire = document.getElementById('rDaire').value.trim();
+const moveInMonth =
+  parseInt(document.getElementById('rMoveInMonth')?.value || 1);
+  const siteName = document.getElementById('rSiteName')?.value.trim();
+  const siteAddr = document.getElementById('rSiteAddr')?.value.trim();
+  const joinCode = document.getElementById('rJoinCode')?.value.trim();
+
+  if (!name || !email || !pass) {
+    toast(L('errFill'), 'no');
+    return;
+  }
+
+  if (pass.length < 6) {
+    toast(L('errPassShort'), 'no');
+    return;
+  }
+
+  if (selRegRoleVal === 'yonetici') {
+    if (!siteName) {
+      toast('Site / Apartman adı zorunlu', 'no');
+      return;
+    }
+  }
+
+  if (selRegRoleVal === 'sakin') {
+    if (!joinCode || !daire) {
+      toast('Katılım kodu ve daire no zorunlu', 'no');
+      return;
+    }
+  }
+
+  try {
+    const res = await fetch('http://localhost:8080/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        role: selRegRoleVal,
+        name: name,
+        email: email,
+        password: pass,
+        apartmentNo: daire,
+        moveInMonth: moveInMonth,
+        siteName: siteName,
+        siteAddress: siteAddr,
+        joinCode: joinCode
+      })
+    });
+
+    if (!res.ok) {
+      toast('Kayıt başarısız. Katılım kodu hatalı veya daire zaten kayıtlı.', 'no');
+      return;
+    }
+
+    const user = await res.json();
+
+    CU = {
+  id: user.id,
+  siteId: user.siteId,
+  name: user.name,
+  email: user.email,
+  moveInMonth: user.moveInMonth,
+  role: user.role === 'admin' ? 'yonetici' : 'sakin',
+  daire: user.apartmentNo,
+  createdAt: user.createdAt
+};
+
+    localStorage.setItem('apartixUser', JSON.stringify(CU));
+
+    toast(L('okReg') + name, 'ok');
+
+    await startApp();
+
+  } catch (error) {
+    console.error(error);
+    toast('Backend bağlantısı kurulamadı', 'no');
+  }
+}
+
+function doLogout() {
+  CU = null;
+  localStorage.removeItem('apartixUser');
+  localStorage.removeItem('apartixPage');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+}
+
+// ─────────────────────────────────────────────────────────────
+// APP BAŞLAT
+// ─────────────────────────────────────────────────────────────
+async function startApp() {
+  await loadSites();
+  await loadUsers();
+await loadCurrentSite();  
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  setupSidebar();
+  buildNav();
+
+  const savedPage = localStorage.getItem('apartixPage') || 'dash';
+  goPage(savedPage);
+}
+
+function setupSidebar() {
+  const s = mySite();
+  document.getElementById('sbBadge').textContent   = s.name.substring(0,2).toUpperCase();
+  document.getElementById('sbSiteName').textContent = s.name;
+  document.getElementById('sbSiteAddr').textContent = s.addr;
+  const av = document.getElementById('sbAva');
+  av.textContent  = CU.name.split(' ').map(x=>x[0]).join('').substring(0,2);
+  av.className    = 'ava ' + (CU.role==='yonetici' ? 'ava-a' : 'ava-r');
+  document.getElementById('sbName').textContent = CU.name;
+  document.getElementById('sbRole').textContent = CU.role==='yonetici' ? L('adminLbl') : (CU.daire||'') + ' · ' + L('residentLbl');
+  buildNav();
+}
+
+function buildNav() {
+  const a = CU.role === 'yonetici';
+  const items = a ? [
+    {sec:L('secAna'),  list:[{ic:'bi-speedometer2',lb:L('navDash'),pg:'dash'}]},
+    {sec:L('secYonetim'), list:[
+      {ic:'bi-megaphone',   lb:L('navAnn'),    pg:'ann-admin'},
+      {ic:'bi-tools',       lb:L('navFault'),  pg:'fault-admin'},
+      {ic:'bi-cash-coin',   lb:L('navAidat'),  pg:'aidat-admin'},
+      {ic:'bi-person-check',lb:L('navVote'),   pg:'vote'},
+      {ic:'bi-people',      lb:'Sakinler',     pg:'residents-admin'},
+      {ic:'bi-buildings',   lb:L('navSite'),   pg:'site-admin'},
+    ]}
+  ] : [
+    {sec:L('secAna'),    list:[{ic:'bi-speedometer2',lb:L('navDash'),pg:'dash'}]},
+    {sec:L('secIslemler'), list:[
+      {ic:'bi-megaphone',          lb:L('navAnn'),    pg:'ann-sakin'},
+      {ic:'bi-exclamation-triangle',lb:L('navFaultR'),pg:'fault-sakin'},
+      {ic:'bi-cash-coin',          lb:L('navAidatR'), pg:'aidat-sakin'},
+      {ic:'bi-person-check',       lb:L('navVote'),   pg:'vote'},
+    ]}
+  ];
+  let h = '';
+  items.forEach(s => {
+    h += '<div class="nav-sec">' + s.sec + '</div>';
+    s.list.forEach(i => {
+      h += '<a class="nav-it" onclick="goPage(\'' + i.pg + '\')" id="ni-' + i.pg + '"><i class="bi ' + i.ic + '"></i>' + i.lb + '</a>';
+    });
+  });
+  document.getElementById('sbNav').innerHTML = h;
+}
+function goPage(name) {
+
+  curPage = name;
+  localStorage.setItem('apartixPage', name);
+
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.nav-it').forEach(n => n.classList.remove('on'));
+
+  const pg = document.getElementById('pg-' + name);
+  if (pg) pg.classList.add('on');
+
+  const ni = document.getElementById('ni-' + name);
+  if (ni) ni.classList.add('on');
+
+  if (name === 'dash') {
+  buildDash();
+  }
+
+  if (name === 'ann-admin') {
+    loadAnnouncements().then(() => renderAnnAdmin());
+  }
+
+  if (name === 'ann-sakin') {
+    loadAnnouncements().then(() => renderAnnRes());
+  }
+
+  if (name === 'fault-admin') {
+    loadFaults().then(() => renderFaultAdmin());
+  }
+
+  if (name === 'fault-sakin') {
+    loadFaults().then(() => renderFaultRes());
+  }
+
+  if (name === 'vote') {
+    loadVoteData().then(() => renderVote());
+  }
+
+  if (name === 'aidat-admin') {
+    loadSiteDues().then(() => renderAidatAdmin());
+  }
+
+  if (name === 'aidat-sakin') {
+    loadDues().then(() => renderAidatRes());
+  }
+if (name === 'residents-admin') {
+  Promise.all([
+    loadUsers(),
+    loadSiteDues()
+  ]).then(() => renderResidentsAdmin());
+}
+  if (name === 'site-admin') {
+  Promise.all([
+    loadSites(),
+    loadUsers()
+  ]).then(() => renderSiteAdmin());
+}
+}
+
+// ─────────────────────────────────────────────────────────────
+// DASHBOARD
+// ─────────────────────────────────────────────────────────────
+async function buildDash() {
+  if (CU.role === 'yonetici') {
+    await loadAnnouncements();
+    await loadFaults();
+    await loadSiteDues();
+    buildDashAdmin();
+  } else {
+    await loadAnnouncements();
+    await loadFaults();
+    await loadDues();
+    buildDashRes();
+  }
+}
+function buildDashAdmin() {
+  const s = mySite();
+  document.getElementById('dashTitle').textContent = L('dashTitle');
+  document.getElementById('dashSub').textContent = L('welcome') + ', ' + CU.name + ' — ' + s.name;
+
+  const res = mySiteRes();
+  const fa = faults.filter(f => f.siteId === CU.siteId);
+  const an = announcements.filter(a => a.siteId === CU.siteId);
+  const siteDues = window._backendSiteDues || [];
+
+  const pendingFaults = fa.filter(f => f.status !== 'Çözüldü').length;
+
+  const fullyPaidUsers = res.filter(r => {
+    const userDues = siteDues.filter(d => d.userId === r.id);
+    return userDues.length > 0 && userDues.every(d => d.status === 'paid');
+  }).length;
+
+  const stats = [
+    {v: res.length, l: L('totalRes'), c:'#06b6d4', bg:'rgba(6,182,212,.11)', ic:'bi-people'},
+    {v: pendingFaults, l: L('pendFaults'), c:'#f43f5e', bg:'rgba(244,63,94,.11)', ic:'bi-tools'},
+    {v: an.length, l: L('activeAnn'), c:'#a855f7', bg:'rgba(168,85,247,.11)', ic:'bi-megaphone'},
+    {v: fullyPaidUsers, l: L('allPaid'), c:'#10b981', bg:'rgba(16,185,129,.11)', ic:'bi-cash-coin'}
+  ];
+
+  document.getElementById('statCards').innerHTML = stats.map(s =>
+    '<div class="col-md-3 col-6"><div class="sc">' +
+    '<div class="sc-ico" style="background:' + s.bg + ';"><i class="bi ' + s.ic + '" style="color:' + s.c + ';font-size:20px;"></i></div>' +
+    '<div style="position:absolute;top:-28px;right:-28px;width:90px;height:90px;border-radius:50%;background:' + s.c + ';opacity:.07;"></div>' +
+    '<div class="sc-val" style="color:' + s.c + ';">' + s.v + '</div><div class="sc-lbl">' + s.l + '</div>' +
+    '</div></div>'
+  ).join('');
+
+  if (currentSiteInfo && currentSiteInfo.joinCode) {
+
+  document.getElementById('statCards').innerHTML +=
+    '<div class="col-12 mt-3">' +
+      '<div class="sc">' +
+        '<div class="sc-lbl">Katılım Kodu</div>' +
+        '<div class="sc-val" style="font-size:24px;color:#6366f1;">' +
+          currentSiteInfo.joinCode +
+        '</div>' +
+        '<button class="btn-g btn-s mt-2" onclick="navigator.clipboard.writeText(\'' + currentSiteInfo.joinCode + '\');toast(\'Kod kopyalandı\',\'ok\')">' +
+          '<i class="bi bi-copy"></i> Kopyala' +
+        '</button>' +
+      '</div>' +
+    '</div>';
+}
+
+  const fS = {};
+  fS[L('waiting')] = fa.filter(f => f.status === 'Beklemede').length;
+  fS[L('inProg')] = fa.filter(f => f.status === 'İşlemde').length;
+  fS[L('solved')] = fa.filter(f => f.status === 'Çözüldü').length;
+
+  const aC = res.slice(0, 10).map(r => {
+    const paidCount = siteDues.filter(d => d.userId === r.id && d.status === 'paid').length;
+    return { n: r.name.split(' ')[0], p: paidCount };
+  });
+document.getElementById('dashCharts').innerHTML =
+  '<div class="col-md-5">' +
+    '<div class="gc">' +
+      '<div class="sec-t"><i class="bi bi-pie-chart" style="color:var(--no);"></i>' + L('faultStatus') + '</div>' +
+      '<div style="height:230px;"><canvas id="fchart"></canvas></div>' +
+    '</div>' +
+  '</div>' +
+
+  '<div class="col-md-7">' +
+    '<div class="gc" style="height:100%;">' +
+      '<div class="sec-t"><i class="bi bi-exclamation-triangle" style="color:var(--warn);"></i>' + L('recentFaults') + '</div>' +
+      fa.slice(0, 4).map(f =>
+        '<div style="display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--b1);">' +
+          '<div style="width:34px;height:34px;border-radius:9px;background:rgba(244,63,94,.09);display:flex;align-items:center;justify-content:center;">' +
+            '<i class="bi bi-tools" style="color:var(--no);font-size:13px;"></i>' +
+          '</div>' +
+          '<div style="flex:1;">' +
+            '<div style="font-size:13px;font-weight:600;">' + f.type + '</div>' +
+            '<div style="font-size:11px;color:var(--t3);">' + f.userName + '</div>' +
+          '</div>' +
+          '<span class="bx ' + SB(f.status) + '">' + LS(f.status) + '</span>' +
+        '</div>'
+      ).join('') +
+    '</div>' +
+  '</div>';setTimeout(() => {
+    const {tc, gc} = TC();
+
+    new Chart(document.getElementById('fchart'), {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(fS),
+        datasets: [{
+          data: Object.values(fS),
+          backgroundColor: ['#f43f5e', '#f59e0b', '#10b981'],
+          borderColor: 'transparent',
+          borderRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {color: tc, font: {size: 11}, padding: 12}
+          }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('achart'), {
+      type: 'bar',
+      data: {
+        labels: aC.map(a => a.n),
+        datasets: [{
+          data: aC.map(a => a.p),
+          backgroundColor: 'rgba(99,102,241,.65)',
+          borderRadius: 7,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {ticks: {color: tc}, grid: {color: gc}},
+          y: {ticks: {color: tc}, grid: {color: gc}, max: 12}
+        },
+        plugins: {legend: {display: false}}
+      }
+    });
+  }, 120);
+
+  document.getElementById('dashQuick').innerHTML =
+  '<div class="col-md-8 mx-auto">' +
+    '<div class="gc">' +
+      '<div class="sec-t"><i class="bi bi-megaphone" style="color:var(--ib);"></i>' + L('recentAnn') + '</div>' +
+      an.slice(0, 4).map(a =>
+        '<div style="padding:11px 0;border-bottom:1px solid var(--b1);">' +
+          '<div style="font-size:13px;font-weight:600;">' + a.title + '</div>' +
+          '<div style="font-size:11px;color:var(--t3);margin-top:2px;">' + a.date + ' · ' + a.cat + '</div>' +
+        '</div>'
+      ).join('') +
+    '</div>' +
+  '</div>';
+    fa.slice(0, 4).map(f =>
+      '<div style="display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--b1);">' +
+      '<div style="width:34px;height:34px;border-radius:9px;background:rgba(244,63,94,.09);display:flex;align-items:center;justify-content:center;"><i class="bi bi-tools" style="color:var(--no);font-size:13px;"></i></div>' +
+      '<div style="flex:1;"><div style="font-size:13px;font-weight:600;">' + f.type + '</div><div style="font-size:11px;color:var(--t3);">' + f.userName + '</div></div>' +
+      '<span class="bx ' + SB(f.status) + '">' + LS(f.status) + '</span></div>'
+    ).join('') +
+    '</div></div>' +
+    '<div class="col-md-6"><div class="gc"><div class="sec-t"><i class="bi bi-megaphone" style="color:var(--ib);"></i>' + L('recentAnn') + '</div>' +
+    an.slice(0, 4).map(a =>
+      '<div style="padding:11px 0;border-bottom:1px solid var(--b1);"><div style="font-size:13px;font-weight:600;">' + a.title + '</div><div style="font-size:11px;color:var(--t3);margin-top:2px;">' + a.date + ' · ' + a.cat + '</div></div>'
+    ).join('') +
+    '</div></div>';
+}
+function buildDashRes() {
+  const s = mySite();
+  document.getElementById('dashTitle').textContent = L('dashTitle');
+  document.getElementById('dashSub').textContent = L('welcome') + ', ' + CU.name + ' — ' + s.name + (CU.daire ? ' · ' + CU.daire : '');
+
+  const mf = faults.filter(f => f.userId === CU.id);
+  const dues = window._backendDues || [];
+  const joinedMonth = CU.moveInMonth || 1;
+const currentMonth = new Date().getMonth() + 1;
+
+const responsibleDues = dues.filter(d =>
+  d.month >= joinedMonth && d.month <= currentMonth
+);
+
+  const paidDues = responsibleDues.filter(d => d.status === 'paid');
+const unpaidDues = responsibleDues.filter(d => d.status !== 'paid');
+
+  const totalDebt = unpaidDues.reduce((sum, d) => sum + Number(d.remainingAmount || 0), 0);
+
+  const stats = [
+    {v: paidDues.length, l: L('paidMLbl'), c:'#10b981', bg:'rgba(16,185,129,.11)', ic:'bi-check-circle'},
+    {v: unpaidDues.length, l: L('unpaidMLbl'), c:'#f43f5e', bg:'rgba(244,63,94,.11)', ic:'bi-x-circle'},
+    {v: totalDebt.toFixed(0) + ' ₺', l: L('debtTotLbl'), c:'#f59e0b', bg:'rgba(245,158,11,.11)', ic:'bi-currency-dollar'},
+    {v: mf.length, l: L('myFaultsLbl'), c:'#06b6d4', bg:'rgba(6,182,212,.11)', ic:'bi-tools'}
+  ];
+
+  document.getElementById('statCards').innerHTML = stats.map(s =>
+    '<div class="col-md-3 col-6"><div class="sc"><div class="sc-ico" style="background:' + s.bg + ';"><i class="bi ' + s.ic + '" style="color:' + s.c + ';font-size:20px;"></i></div>' +
+    '<div class="sc-val" style="color:' + s.c + ';">' + s.v + '</div><div class="sc-lbl">' + s.l + '</div></div></div>'
+  ).join('');
+
+  document.getElementById('dashCharts').innerHTML =
+    '<div class="col-12"><div class="gc"><div class="sec-t"><i class="bi bi-calendar-check" style="color:var(--ok);"></i>' + L('aidatOverview') + '</div>' +
+    '<div class="row g-2">' + MONTHS.map((m, i) => {
+  const monthNo = i + 1;
+  const currentMonth = 5;
+
+  if (monthNo > currentMonth) {
+    return '<div class="col-md-1 col-3"><div class="mt" style="opacity:.45;background:rgba(107,114,128,.15);border:1px solid rgba(107,114,128,.2);color:#9ca3af;">' +
+      m.substring(0, 3) +
+      '<div class="mt-s">Kilitli</div></div></div>';
+  }
+
+  if (monthNo < joinedMonth) {
+    return '<div class="col-md-1 col-3"><div class="mt" style="background:rgba(107,114,128,.18);border:1px solid rgba(107,114,128,.25);color:#9ca3af;">' +
+      m.substring(0, 3) +
+      '<div class="mt-s">Sorumlu Değil</div></div></div>';
+  }
+
+  const due = dues.find(d => d.month === monthNo);
+  const paid = due && due.status === 'paid';
+
+  return '<div class="col-md-1 col-3"><div class="mt ' + (paid ? 'mt-p' : 'mt-u') + '">' +
+    m.substring(0, 3) +
+    '<div class="mt-s">' + (paid ? '✓' : '✗') + '</div></div></div>';
+}).join('') + '</div></div></div>';
+
+  document.getElementById('dashQuick').innerHTML =
+    '<div class="col-md-6"><div class="gc"><div class="sec-t"><i class="bi bi-megaphone" style="color:var(--ib);"></i>' + L('recentAnn') + '</div>' +
+    announcements.filter(a => a.siteId === CU.siteId).slice(0, 4).map(a =>
+      '<div style="padding:11px 0;border-bottom:1px solid var(--b1);"><div style="font-size:13px;font-weight:600;">' + a.title + '</div><div style="font-size:11px;color:var(--t3);margin-top:2px;">' + a.date + '</div></div>'
+    ).join('') +
+    '</div></div>' +
+    '<div class="col-md-6"><div class="gc"><div class="sec-t"><i class="bi bi-tools" style="color:var(--no);"></i>' + L('myFaultsLbl') + '</div>' +
+    (mf.length ? mf.slice(0, 4).map(f =>
+      '<div style="display:flex;align-items:center;gap:9px;padding:11px 0;border-bottom:1px solid var(--b1);">' +
+      '<div style="flex:1;"><div style="font-size:13px;font-weight:600;">' + f.type + '</div><div style="font-size:11px;color:var(--t3);">' + f.date + '</div></div>' +
+      '<span class="bx ' + SB(f.status) + '">' + LS(f.status) + '</span></div>'
+    ).join('')
+    : '<div style="color:var(--t3);font-size:13px;padding:8px 0;">' + L('noFaults') + '</div>') +
+    '</div></div>';
+}
+
+// ─────────────────────────────────────────────────────────────
+// DUYURULAR
+// ─────────────────────────────────────────────────────────────
+function annCard(a, isAdmin) {
+  const ch = a.comments.map(c => {
+    const reps = c.replies.map(r => '<div class="cm-rep"><div class="cm-n">' + r.userName + '</div><div class="cm-b">' + r.text + '</div></div>').join('');
+    const btns = '<div style="display:flex;gap:5px;flex-shrink:0;margin-left:10px;">' +
+      '<button class="btn-g btn-s" onclick="openReply(' + a.id + ',' + c.id + ')"><i class="bi bi-reply"></i></button>' +
+      (isAdmin ? '<button class="btn-no btn-s" onclick="delComment(' + a.id + ',' + c.id + ')"><i class="bi bi-trash"></i></button>' : '') +
+      '</div>';
+    return '<div class="cm"><div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
+      '<div><div class="cm-n">' + c.userName + '</div><div class="cm-b">' + c.text + '</div></div>' + btns + '</div>' + reps + '</div>';
+  }).join('');
+  return '<div class="ann"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">' +
+    '<div style="flex:1;"><div class="ann-t">' + a.title + '</div>' +
+    '<div class="ann-m"><i class="bi bi-person-circle"></i>' + a.author + '<span>·</span><i class="bi bi-calendar3"></i>' + a.date + '<span class="bx ' + CB(a.cat) + '">' + a.cat + '</span></div>' +
+    '<div class="ann-b">' + a.body + '</div></div>' +
+    (isAdmin ? '<button class="btn-no btn-s" onclick="delAnn(' + a.id + ')" style="flex-shrink:0;"><i class="bi bi-trash"></i></button>' : '') +
+    '</div>' + ch +
+    '<div class="ann-f"><span style="font-size:12px;color:var(--t3);"><i class="bi bi-chat me-1"></i>' + a.comments.length + '</span>' +
+    '<button class="btn-g btn-s ms-auto" onclick="openCom(' + a.id + ')"><i class="bi bi-chat-dots me-1"></i>' + L('comBtn') + '</button></div></div>';
+}
+
+function renderAnnAdmin() { document.getElementById('annListAdmin').innerHTML = myAnns().map(a => annCard(a,true)).join(''); }
+function renderAnnRes()   { document.getElementById('annListRes').innerHTML   = myAnns().map(a => annCard(a,false)).join(''); }
+
+async function createAnn() {
+  const ti = document.getElementById('mAnnT').value.trim();
+  const bo = document.getElementById('mAnnB').value.trim();
+
+  if (!ti || !bo) {
+    toast(L('errFill'), 'no');
+    return;
+  }
+
+  try {
+    const res = await fetch('http://localhost:8080/api/announcements', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        siteId: CU.siteId,
+        adminId: CU.id,
+        title: ti,
+        content: bo
+      })
+    });
+
+    if (!res.ok) {
+      toast('Duyuru eklenemedi', 'no');
+      return;
+    }
+
+    closeM('mAnn');
+    document.getElementById('mAnnT').value = '';
+    document.getElementById('mAnnB').value = '';
+
+    await loadAnnouncements();
+    renderAnnAdmin();
+
+    toast(L('okAnn'), 'ok');
+
+  } catch (error) {
+    console.error(error);
+    toast('Backend bağlantısı kurulamadı', 'no');
+  }
+}
+async function delAnn(id) {
+  try {
+    const res = await fetch(`http://localhost:8080/api/announcements/${id}`, {
+      method: 'DELETE'
+    });
+
+    if (!res.ok) {
+      toast('Duyuru silinemedi', 'no');
+      return;
+    }
+
+    await loadAnnouncements();
+    renderAnnAdmin();
+    toast(L('delAnn'), 'w');
+
+  } catch (error) {
+    console.error(error);
+    toast('Duyuru silinemedi', 'no');
+  }
+}
+function openCom(aId) { document.getElementById('cAnnId').value=aId; document.getElementById('cTxt').value=''; openM('mCom'); }
+async function doComment() {
+
+  const aId = parseInt(document.getElementById('cAnnId').value);
+  const tx = document.getElementById('cTxt').value.trim();
+
+  if (!tx) {
+    toast(L('empty'),'no');
+    return;
+  }
+
+  const bad = checkBanned(tx);
+
+  if (bad) {
+    toast(L('banned') + bad + '"','no');
+    return;
+  }
+
+  try {
+
+    const res = await fetch(
+      'http://localhost:8080/api/announcement-comments',
+      {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify({
+          announcementId:aId,
+          userId:CU.id,
+          comment:tx
+        })
+      }
+    );
+
+    if (!res.ok) {
+      toast('Yorum eklenemedi','no');
+      return;
+    }
+
+    closeM('mCom');
+    document.getElementById('cTxt').value='';
+
+    await loadAnnouncements();
+
+    if (CU.role === 'yonetici')
+      renderAnnAdmin();
+    else
+      renderAnnRes();
+
+    toast(L('okCm'),'ok');
+
+  } catch(error) {
+    console.error(error);
+    toast('Yorum eklenemedi','no');
+  }
+}
+function openReply(aId, cId) { document.getElementById('rAnnId').value=aId; document.getElementById('rCmId').value=cId; document.getElementById('rTxt').value=''; openM('mReply'); }
+function doReply() {
+  const aId=parseInt(document.getElementById('rAnnId').value), cId=parseInt(document.getElementById('rCmId').value), tx=document.getElementById('rTxt').value.trim();
+  if (!tx) { toast(L('empty'),'no'); return; }
+  const bad=checkBanned(tx); if (bad) { toast(L('banned')+bad+'"','no'); return; }
+  const a=announcements.find(x=>x.id===aId), c=a&&a.comments.find(x=>x.id===cId);
+  if (c) c.replies.push({userId:CU.id,userName:CU.name,text:tx});
+  closeM('mReply'); if (CU.role==='yonetici') renderAnnAdmin(); else renderAnnRes(); toast(L('okRep'),'ok');
+}
+function delComment(aId, cId) { const a=announcements.find(x=>x.id===aId); if(a) a.comments=a.comments.filter(c=>c.id!==cId); renderAnnAdmin(); toast(L('delCm'),'w'); }
+
+// ─────────────────────────────────────────────────────────────
+// ARIZALAR
+// ─────────────────────────────────────────────────────────────
+function renderFaultAdmin() {
+  const fa = myFaults();
+
+  const waiting = fa.filter(f => f.status === 'Beklemede');
+  const inProgress = fa.filter(f => f.status === 'İşlemde');
+  const solved = fa.filter(f => f.status === 'Çözüldü');
+
+  document.getElementById('fTotal').textContent = fa.length;
+  document.getElementById('fPend').textContent = waiting.length;
+  document.getElementById('fDone').textContent = solved.length;
+
+  function faultCard(f) {
+    return '<div class="fr"><div class="f-ico" style="background:rgba(244,63,94,.09);"><i class="bi ' + FI(f.type) + '" style="color:var(--no);font-size:17px;"></i></div>' +
+      '<div style="flex:1;"><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:5px;">' +
+      '<div class="f-t">' + f.type + '</div><span class="bx ' + PB(f.priority) + '">' + f.priority + '</span><span class="bx ' + SB(f.status) + '">' + LS(f.status) + '</span></div>' +
+      '<div class="f-m"><i class="bi bi-person me-1"></i>' + f.userName + ' · <i class="bi bi-calendar3 me-1"></i>' + f.date + '</div>' +
+      '<div style="font-size:13px;color:var(--t2);margin-top:6px;line-height:1.6;">' + f.desc + '</div>' +
+      '<div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap;">' +
+      (f.status !== 'Çözüldü' ? '<button class="btn-ok btn-s" onclick="chFault(' + f.id + ',\'Çözüldü\')"><i class="bi bi-check2-circle"></i> ' + L('markSolved') + '</button>' : '') +
+      (f.status === 'Beklemede' ? '<button class="btn-g btn-s" onclick="chFault(' + f.id + ',\'İşlemde\')"><i class="bi bi-hourglass-split"></i> ' + L('takeAction') + '</button>' : '') +
+      '<button class="btn-no btn-s" onclick="delFault(' + f.id + ')"><i class="bi bi-trash"></i></button>' +
+      '</div></div></div>';
+  }
+
+  function section(title, icon, color, items, emptyText) {
+    return '<div class="gc mb-3">' +
+      '<div class="sec-t" style="margin-bottom:12px;">' +
+      '<i class="bi ' + icon + '" style="color:' + color + ';"></i>' +
+      '<span>' + title + '</span>' +
+      '<span class="bx bx-neu" style="margin-left:auto;">' + items.length + '</span>' +
+      '</div>' +
+      (items.length
+        ? items.map(faultCard).join('')
+        : '<div style="color:var(--t3);font-size:13px;padding:8px 0;">' + emptyText + '</div>') +
+      '</div>';
+  }
+
+  document.getElementById('faultListAdmin').innerHTML =
+    section('Beklemede', 'bi-hourglass-split', 'var(--warn)', waiting, 'Bekleyen arıza bulunmuyor.') +
+    section('İşlemde', 'bi-tools', 'var(--info)', inProgress, 'İşlemde arıza bulunmuyor.') +
+    section('Çözüldü', 'bi-check-circle', 'var(--ok)', solved, 'Çözülmüş arıza bulunmuyor.');
+}
+
+function renderFaultRes() {
+  const mf=faults.filter(f=>f.userId===CU.id), af=myFaults();
+  document.getElementById('faultListRes').innerHTML=
+    '<div class="gc mb-3"><div class="sec-t"><i class="bi bi-person" style="color:var(--ia);"></i>'+L('myFaults')+'</div>' +
+    (mf.length ? mf.map(f =>
+      '<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--b1);">' +
+      '<div class="f-ico" style="background:rgba(244,63,94,.09);width:38px;height:38px;border-radius:9px;"><i class="bi '+FI(f.type)+'" style="color:var(--no);font-size:15px;"></i></div>' +
+      '<div style="flex:1;"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">' +
+      '<div style="font-weight:700;font-size:13px;">'+f.type+'</div>' +
+      '<span class="bx '+PB(f.priority)+'">'+f.priority+'</span><span class="bx '+SB(f.status)+'">'+LS(f.status)+'</span></div>' +
+      '<div style="font-size:11px;color:var(--t3);">'+f.date+'</div>' +
+      '<div style="font-size:13px;color:var(--t2);margin-top:3px;">'+f.desc+'</div></div></div>').join('')
+      : '<div style="color:var(--t3);font-size:13px;padding:7px 0;">'+L('noFaults')+'</div>') +
+    '</div><div class="gc"><div class="sec-t"><i class="bi bi-list-ul" style="color:var(--t3);"></i>'+L('allFaults')+'</div>' +
+    af.map(f =>
+      '<div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--b1);">' +
+      '<div style="width:34px;height:34px;border-radius:9px;background:rgba(244,63,94,.09);display:flex;align-items:center;justify-content:center;"><i class="bi '+FI(f.type)+'" style="color:var(--no);font-size:13px;"></i></div>' +
+      '<div style="flex:1;"><div style="font-size:13px;font-weight:600;">'+f.type+'<span style="color:var(--t3);font-weight:400;"> · '+f.userName+'</span></div>' +
+      '<div style="font-size:11px;color:var(--t3);">'+f.desc.substring(0,50)+'...</div></div>' +
+      '<span class="bx '+SB(f.status)+'">'+LS(f.status)+'</span></div>').join('') + '</div>';
+}
+
+async function createFault() {
+  const tp = document.getElementById('mFT').value;
+  const dc = document.getElementById('mFD').value.trim();
+
+  if (!dc) {
+    toast(L('empty'), 'no');
+    return;
+  }
+
+  const bad = checkBanned(dc);
+  if (bad) {
+    toast(L('banned') + bad + '"', 'no');
+    return;
+  }
+
+  try {
+    const res = await fetch('http://localhost:8080/api/faults', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        siteId: CU.siteId,
+        userId: CU.id,
+        title: tp,
+        description: dc
+      })
+    });
+
+    if (!res.ok) {
+      toast('Arıza kaydedilemedi', 'no');
+      return;
+    }
+
+    closeM('mFault');
+    document.getElementById('mFD').value = '';
+
+    await loadFaults();
+    renderFaultRes();
+
+    toast(L('okFault'), 'ok');
+
+  } catch (error) {
+    console.error(error);
+    toast('Backend bağlantısı kurulamadı', 'no');
+  }
+}
+async function chFault(id, st) {
+
+  let backendStatus = 'open';
+
+  if (st === 'İşlemde') {
+    backendStatus = 'in_progress';
+  }
+
+  if (st === 'Çözüldü') {
+    backendStatus = 'resolved';
+  }
+
+  try {
+
+    const res = await fetch(
+      `http://localhost:8080/api/faults/${id}/status?status=${backendStatus}`,
+      {
+        method: 'PUT'
+      }
+    );
+
+    if (!res.ok) {
+      toast('Durum güncellenemedi', 'no');
+      return;
+    }
+
+    await loadFaults();
+    renderFaultAdmin();
+
+    toast(L('stUpd') + st, 'ok');
+
+  } catch (error) {
+    console.error(error);
+    toast('Backend bağlantısı kurulamadı', 'no');
+  }
+}
+async function delFault(id) {
+  try {
+    const res = await fetch(`http://localhost:8080/api/faults/${id}`, {
+      method: 'DELETE'
+    });
+
+    if (!res.ok) {
+      toast('Arıza silinemedi', 'no');
+      return;
+    }
+
+    await loadFaults();
+    renderFaultAdmin();
+    toast(L('delFault'), 'w');
+
+  } catch (error) {
+    console.error(error);
+    toast('Arıza silinemedi', 'no');
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// OYLAMA — tüm 100 sakin aday
+// ─────────────────────────────────────────────────────────────
+function renderVote() {
+  const poll = window._backendPoll;
+  const options = window._backendPollOptions || [];
+  const sv = window._backendVotes || [];
+
+  if (!poll) {
+    document.getElementById('voteCards').innerHTML =
+      '<div class="gc">Aktif oylama bulunmuyor.</div>';
+    return;
+  }
+
+  document.getElementById('voteElectionTitle').textContent = poll.title;
+  document.getElementById('subVote').textContent = poll.description || '';
+
+  const myVote = sv.find(v => v.userId === CU.id);
+
+  const cols = [
+    {bg:'rgba(99,102,241,.14)',fg:'#818cf8'},
+    {bg:'rgba(16,185,129,.14)',fg:'#34d399'},
+    {bg:'rgba(6,182,212,.14)', fg:'#22d3ee'},
+    {bg:'rgba(245,158,11,.14)',fg:'#fbbf24'},
+    {bg:'rgba(168,85,247,.14)',fg:'#c084fc'}
+  ];
+
+  document.getElementById('voteCards').innerHTML = options.map((o, i) => {
+    const vc = sv.filter(v => v.optionId === o.id).length;
+    const voted = myVote && myVote.optionId === o.id;
+    const cl = cols[i % cols.length];
+
+    return '<div class="col-md-2 col-4"><div class="vc ' + (voted ? 'vd' : '') + '" onclick="doVote(' + o.id + ',' + o.candidateUserId + ')">' +
+      '<div class="v-ava" style="background:' + cl.bg + ';"><span style="color:' + cl.fg + ';">' + o.optionText.split(' ').map(n => n[0]).join('').substring(0,2) + '</span></div>' +
+      '<div class="v-nm" style="font-size:12px;">' + o.optionText + '</div>' +
+      '<div class="v-apt">Aday</div>' +
+      '<div class="v-num">' + vc + '</div>' +
+      '<div class="v-lbl">' + L('voteLbl') + '</div>' +
+      (voted ? '<div style="margin-top:8px;"><span class="bx bx-warn" style="font-size:10px;"><i class="bi bi-check2 me-1"></i>' + L('votedLbl') + '</span></div>' : '') +
+      '</div></div>';
+  }).join('');
+
+  renderVoteChartBackend(options, sv);
+}
+
+function renderVoteChartBackend(options, votesData) {
+  const ctx = document.getElementById('voteChart');
+  if (!ctx) return;
+
+  const {tc, gc} = TC();
+
+  const labels = options.map(o => o.optionText);
+  const data = options.map(o => votesData.filter(v => v.optionId === o.id).length);
+
+  if (vchart) vchart.destroy();
+
+  vchart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: ['#818cf8','#34d399','#22d3ee','#fbbf24','#c084fc'],
+        borderRadius: 10,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: 'y',
+      scales: {
+        x: { ticks: { color: tc }, grid: { color: gc } },
+        y: { ticks: { color: tc, font: { size: 11 } }, grid: { color: gc } }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+async function doVote(optionId, candidateUserId) {
+  const poll = window._backendPoll;
+  const sv = window._backendVotes || [];
+
+  if (!poll) return;
+
+  if (CU.id === candidateUserId) {
+    toast(L('voteSelf'), 'no');
+    return;
+  }
+
+  if (sv.find(v => v.userId === CU.id)) {
+    toast(L('voteDup'), 'w');
+    return;
+  }
+
+  try {
+    const res = await fetch(`http://localhost:8080/api/polls/${poll.id}/vote`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userId: CU.id,
+        optionId: optionId
+      })
+    });
+
+    if (!res.ok) {
+      toast(L('voteDup'), 'w');
+      return;
+    }
+
+    await loadVoteData();
+    renderVote();
+
+    toast(L('voteOk'), 'ok');
+
+  } catch (error) {
+    console.error(error);
+    toast('Oy kaydedilemedi', 'no');
+  }
+}
+
+function renderVoteChart(cands) {
+  const ctx=document.getElementById('voteChart'); if(!ctx) return;
+  const {tc,gc}=TC(), sv=mySiteVotes();
+  const labels=cands.map(c=>c.name.split(' ')[0]);
+  const data=cands.map(c=>sv.filter(v=>v.candidateId===c.id).length);
+  const colors=['#818cf8','#34d399','#22d3ee','#fbbf24','#c084fc','#fb7185','#2dd4bf','#facc15','#a78bfa','#60a5fa','#f472b6','#4ade80','#fb923c','#38bdf8','#e879f9'];
+  if (vchart) vchart.destroy();
+  vchart=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data,backgroundColor:colors.slice(0,cands.length),borderRadius:10,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',scales:{x:{ticks:{color:tc},grid:{color:gc}},y:{ticks:{color:tc,font:{size:11}},grid:{color:gc}}},plugins:{legend:{display:false}}}});
+}
+
+// ─────────────────────────────────────────────────────────────
+// AİDAT — Basit faiz: 500 × %1 × gecikme günü
+// ─────────────────────────────────────────────────────────────
+function calcDebt(uid) {
+  const paid=aidatData[uid]||[], now=new Date();
+  let total=0; const details=[];
+  for (let i=0;i<12;i++) {
+    if (!paid.includes(i)) {
+      const dueDate=new Date(2026,i+1,0);
+      const daysLate=dueDate<now?Math.floor((now-dueDate)/(1000*60*60*24)):0;
+      const interest=+(FEE*DAILY_RATE*daysLate).toFixed(2);
+      const rowTotal=+(FEE+interest).toFixed(2);
+      total+=rowTotal;
+      details.push({month:MONTHS[i],base:FEE,daysLate,interest:interest.toFixed(2),total:rowTotal.toFixed(2)});
+    }
+  }
+  return {total:+total.toFixed(2),details};
+
+}
+
+function renderAidatAdmin() {
+  const dues = window._backendSiteDues || [];
+
+  const oldSearch = document.getElementById('aidatSearch')?.value || '';
+  const q = oldSearch.toLowerCase().trim();
+
+  const rows = mySiteRes()
+    .filter(r => r.name.toLowerCase().includes(q))
+    .map(r => {
+      const userDues = dues.filter(d => d.userId === r.id);
+
+      const joinedMonth = r.moveInMonth || 1;
+const currentMonth = new Date().getMonth() + 1;
+
+const responsibleDues = userDues.filter(d =>
+  d.month >= joinedMonth &&
+  d.month <= currentMonth
+);
+
+const paidCount = responsibleDues.filter(d => d.status === 'paid').length;
+const unpaidCount = responsibleDues.filter(d => d.status !== 'paid').length;
+
+      const totalDebt = responsibleDues
+        .filter(d => d.status !== 'paid')
+        .reduce((sum, d) => sum + Number(d.remainingAmount || 0), 0);
+
+      const cells = MONTHS.map((m, i) => {
+        const monthNo = i + 1;
+
+        const currentMonth = new Date().getMonth() + 1;
+
+if (monthNo > currentMonth) {
+  return '<span title="' + m + ' - Henüz Gelmedi" style="width:22px;height:18px;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;background:rgba(107,114,128,.12);color:#6b7280;opacity:.45;">' +
+    '🔒' +
+    '</span>';
+}
+
+        if (monthNo < joinedMonth) {
+          return '<span title="' + m + ' - Sorumlu Değil" style="width:22px;height:18px;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;background:rgba(107,114,128,.18);color:#9ca3af;">' +
+            '-' +
+            '</span>';
+        }
+
+        const due = userDues.find(d => d.month === monthNo);
+        const paid = due && due.status === 'paid';
+
+        return '<span title="' + m + '" style="width:22px;height:18px;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;background:' +
+          (paid ? 'rgba(16,185,129,.14)' : 'rgba(244,63,94,.14)') +
+          ';color:' + (paid ? 'var(--ok)' : 'var(--no)') + ';">' +
+          m.substring(0, 1) +
+          '</span>';
+      }).join('');
+
+      return '<tr><td style="padding:11px 12px;border-radius:10px 0 0 10px;background:var(--bg3);"><div style="font-weight:700;font-size:13px;">' + r.name + '</div><div style="font-size:11px;color:var(--t3);">' + r.daire + '</div></td>' +
+        '<td style="padding:11px 6px;background:var(--bg3);"><span style="color:var(--ok);font-weight:700;">' + paidCount + '</span><span style="color:var(--t3);font-size:11px;">/' + responsibleDues.length + '</span></td>' +
+        '<td style="padding:11px 6px;background:var(--bg3);"><span style="color:var(--no);font-weight:700;">' + unpaidCount + '</span></td>' +
+        '<td style="padding:11px 6px;background:var(--bg3);"><span style="color:var(--warn);font-weight:700;">' + totalDebt.toFixed(0) + ' ₺</span></td>' +
+        '<td style="padding:11px 6px;border-radius:0 10px 10px 0;background:var(--bg3);"><div style="display:flex;gap:2px;flex-wrap:wrap;">' + cells + '</div></td></tr>';
+    }).join('');
+
+  document.getElementById('aidatAdmin').innerHTML =
+    '<div class="gc mb-3">' +
+    '<input id="aidatSearch" class="fi" type="text" placeholder="Sakin adı veya soyadı ile ara..." value="' + oldSearch + '" oninput="renderAidatAdmin()">' +
+    '</div>' +
+    '<div class="gc" style="overflow-x:auto;"><table style="width:100%;border-collapse:separate;border-spacing:0 4px;">' +
+    '<thead><tr>' +
+    '<th style="color:var(--t3);font-size:10px;text-transform:uppercase;letter-spacing:1px;padding:4px 12px;text-align:left;font-weight:700;">' + L('residentLbl') + '</th>' +
+    '<th style="color:var(--t3);font-size:10px;text-transform:uppercase;padding:4px 6px;font-weight:700;">' + L('paidMLbl') + '</th>' +
+    '<th style="color:var(--t3);font-size:10px;text-transform:uppercase;padding:4px 6px;font-weight:700;">' + L('unpaidMLbl') + '</th>' +
+    '<th style="color:var(--t3);font-size:10px;text-transform:uppercase;padding:4px 6px;font-weight:700;">' + L('debtTotLbl') + '</th>' +
+    '<th style="color:var(--t3);font-size:10px;text-transform:uppercase;padding:4px 6px;font-weight:700;">2026</th>' +
+    '</tr></thead><tbody>' +
+    (rows || '<tr><td colspan="5" style="padding:16px;text-align:center;color:var(--t3);background:var(--bg3);border-radius:10px;">Sonuç bulunamadı</td></tr>') +
+    '</tbody></table></div>';
+
+  const searchInput = document.getElementById('aidatSearch');
+  if (searchInput) {
+    searchInput.focus();
+    searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+  }
+}function renderAidatRes() {
+  const dues = window._backendDues || [];
+
+  const joinedMonth = CU.moveInMonth || 1;
+
+  const currentMonth = new Date().getMonth() +1 ;
+
+const responsibleDues = dues.filter(d =>
+  d.month >= joinedMonth && d.month <= currentMonth
+);
+
+  const paidDues = responsibleDues.filter(d => d.status === 'paid');
+  const unpaidDues = responsibleDues.filter(d => d.status !== 'paid');
+
+  const totalDebt = unpaidDues.reduce((sum, d) => {
+    return sum + Number(d.remainingAmount || 0);
+  }, 0);
+
+  document.getElementById('paidC').textContent = paidDues.length;
+  document.getElementById('unpaidC').textContent = unpaidDues.length;
+  document.getElementById('debtTot').textContent = totalDebt.toFixed(0) + ' ₺';
+
+  document.getElementById('aidatMonths').innerHTML = MONTHS.map((m, i) => {
+    const currentMonth = new Date().getMonth() + 1;
+    const monthNo = i + 1;
+
+    if (monthNo > currentMonth) {
+  return `
+    <div class="col-md-1 col-3">
+      <div class="mt"
+        style="
+          opacity:.45;
+          background:rgba(107,114,128,.15);
+          border:1px solid rgba(107,114,128,.2);
+        ">
+        ${m.substring(0,3)}
+        <div class="mt-s">Henüz Gelmedi</div>
+      </div>
+    </div>
+  `;
+}
+
+    if (monthNo < joinedMonth) {
+      return `
+        <div class="col-md-1 col-3">
+          <div class="mt" style="background:rgba(107,114,128,.18);border:1px solid rgba(107,114,128,.25);color:#9ca3af;">
+            ${m.substring(0, 3)}
+            <div class="mt-s">Sorumlu Değil</div>
+          </div>
+        </div>
+      `;
+    }
+
+    const due = dues.find(d => d.month === monthNo);
+    const paid = due && due.status === 'paid';
+
+    return `
+      <div class="col-md-1 col-3">
+        <div class="mt ${paid ? 'mt-p' : 'mt-u'}">
+          ${m.substring(0, 3)}
+          <div class="mt-s">${paid ? L('paidLabel') : L('unpaidLabel')}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  if (totalDebt > 0) {
+    document.getElementById('debtBox').style.display = 'block';
+    document.getElementById('debtAmt').textContent = totalDebt.toFixed(0) + ' ₺';
+
+    document.getElementById('debtBreak').innerHTML =
+      '<table style="width:100%;font-size:12px;border-collapse:separate;border-spacing:0 3px;">' +
+      '<thead><tr>' +
+      '<th style="color:var(--t3);padding:3px 10px;text-align:left;font-weight:700;">' + L('monthCol') + '</th>' +
+      '<th style="color:var(--t3);padding:3px 5px;text-align:right;font-weight:700;">' + L('feeCol') + '</th>' +
+      '<th style="color:var(--t3);padding:3px 5px;text-align:right;font-weight:700;">' + L('intCol') + '</th>' +
+      '<th style="color:var(--t3);padding:3px 5px;text-align:right;font-weight:700;">' + L('totCol') + '</th>' +
+      '<th style="color:var(--t3);padding:3px 5px;text-align:right;font-weight:700;">İşlem</th>' +
+      '</tr></thead><tbody>' +
+
+      unpaidDues
+        .sort((a, b) => a.month - b.month)
+        .map(d => {
+          const monthName = MONTHS[d.month - 1];
+          const amount = Number(d.amount || 0);
+          const lateFee = Number(d.lateFee || 0);
+          const remaining = Number(d.remainingAmount || 0);
+
+          return '<tr>' +
+            '<td style="padding:9px 10px;background:var(--bg3);border-radius:8px 0 0 8px;font-weight:600;">' + monthName + '</td>' +
+            '<td style="padding:9px 5px;text-align:right;background:var(--bg3);">' + amount.toFixed(0) + ' ₺</td>' +
+            '<td style="padding:9px 5px;text-align:right;background:var(--bg3);color:var(--warn);">+' + lateFee.toFixed(0) + ' ₺</td>' +
+            '<td style="padding:9px 10px;text-align:right;background:var(--bg3);color:var(--no);font-weight:700;">' + remaining.toFixed(0) + ' ₺</td>' +
+            '<td style="padding:9px 10px;text-align:right;background:var(--bg3);border-radius:0 8px 8px 0;">' +
+              '<button class="btn-ok btn-s" onclick="goPayment(' + d.id + ')">Bu Ayı Öde</button>' +
+            '</td>' +
+          '</tr>';
+        }).join('') +
+
+      '<tr><td colspan="4" style="padding:12px 10px;font-weight:700;font-family:\'Outfit\',sans-serif;font-size:14px;">' + L('debtRow') + '</td>' +
+      '<td style="padding:12px 10px;text-align:right;font-family:\'Outfit\',sans-serif;font-size:18px;font-weight:900;color:var(--no);">' + totalDebt.toFixed(0) + ' ₺</td></tr>' +
+      '</tbody></table>';
+
+    window._debt = {
+      total: totalDebt,
+      details: unpaidDues
+    };
+
+  } else {
+    document.getElementById('debtBox').style.display = 'none';
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// ÖDEME
+// ─────────────────────────────────────────────────────────────
+function goPayment(selectedDueId = null) {
+  goPage('pay');
+
+  const dues = window._backendDues || [];
+  const unpaidDues = dues.filter(d => d.status !== 'paid');
+
+  const payDues = selectedDueId
+    ? unpaidDues.filter(d => d.id === selectedDueId)
+    : unpaidDues;
+
+  window._paymentDues = payDues;
+
+  const total = payDues.reduce((sum, d) => sum + Number(d.remainingAmount || 0), 0);
+
+  document.getElementById('payAmt').textContent = total.toFixed(0) + ' ₺';
+
+  document.getElementById('paySummary').innerHTML =
+    payDues.map(d => {
+      const monthName = MONTHS[d.month - 1];
+      const amount = Number(d.amount || 0);
+      const lateFee = Number(d.lateFee || 0);
+      const totalRow = Number(d.remainingAmount || 0);
+
+      return '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--b1);font-size:13px;">' +
+        '<span style="color:var(--t3);">' + monthName + ' 2026 — Aidat: ' + amount.toFixed(0) + ' ₺ + Faiz: ' + lateFee.toFixed(0) + ' ₺</span>' +
+        '<span style="color:var(--no);font-weight:700;">' + totalRow.toFixed(0) + ' ₺</span></div>';
+    }).join('') +
+    '<div style="display:flex;justify-content:space-between;padding:14px 0;font-family:\'Outfit\',sans-serif;font-size:18px;font-weight:900;">' +
+    '<span>' + L('totalLbl') + '</span><span style="color:var(--warn);">' + total.toFixed(0) + ' ₺</span></div>';
+}
+function fmtNum(el) { let v=el.value.replace(/\D/g,'').substring(0,16); el.value=v.replace(/(.{4})/g,'$1 ').trim(); }
+function fmtExp(el) { let v=el.value.replace(/\D/g,''); if(v.length>=2) v=v.substring(0,2)+'/'+v.substring(2,4); el.value=v; }
+function updCC() {
+  const n=document.getElementById('cNum').value||'', nm=document.getElementById('cName').value||'', ex=document.getElementById('cExp').value||'';
+  document.getElementById('ccNum').textContent=n||'•••• •••• •••• ••••';
+  document.getElementById('ccName').textContent=(nm||'AD SOYAD').toUpperCase();
+  document.getElementById('ccExp').textContent=ex||'MM/YY';
+}
+async function doPay() {
+  const n = document.getElementById('cNum').value.replace(/\s/g, '');
+  const nm = document.getElementById('cName').value.trim();
+  const ex = document.getElementById('cExp').value;
+  const cv = document.getElementById('cCvv').value;
+
+  if (n.length < 16 || !nm || ex.length < 5 || cv.length < 3) {
+    toast(L('payFill'), 'no');
+    return;
+  }
+
+  const unpaidDues = window._paymentDues || (window._backendDues || []).filter(d => d.status !== 'paid');
+
+  if (unpaidDues.length === 0) {
+    toast('Ödenecek borç bulunmuyor', 'w');
+    return;
+  }
+
+  toast(L('paying'), 'w');
+
+  try {
+    for (const due of unpaidDues) {
+      await fetch(`http://localhost:8080/api/dues/${due.id}/pay`, {
+        method: 'PUT'
+      });
+    }
+
+    await loadDues();
+
+    toast(L('payOk'), 'ok');
+
+    setTimeout(() => {
+      goPage('aidat-sakin');
+    }, 1200);
+
+  } catch (error) {
+    console.error(error);
+    toast('Ödeme işlemi başarısız', 'no');
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// SİTE YÖNETİMİ
+// ─────────────────────────────────────────────────────────────
+function renderResidentsAdmin() {
+  const dues = window._backendSiteDues || [];
+
+  const oldSearch = document.getElementById('residentSearch')?.value || '';
+  const q = oldSearch.toLowerCase().trim();
+console.log("mySiteRes:", mySiteRes());
+  const residents = mySiteRes()
+    .filter(r =>
+      r.name.toLowerCase().includes(q) ||
+      String(r.daire || '').toLowerCase().includes(q) ||
+      String(r.email || '').toLowerCase().includes(q)
+    );
+const rows = residents.map(r => {
+  const userDues = dues.filter(d => d.userId === r.id);
+
+  const totalDebt = userDues
+    .filter(d => d.status !== 'paid')
+    .reduce((sum, d) => sum + Number(d.remainingAmount || 0), 0);
+
+  const debtBadge = totalDebt > 0
+    ? '<span class="bx bx-no">' + totalDebt.toFixed(0) + ' ₺ Borç</span>'
+    : '<span class="bx bx-ok">Borç Yok</span>';
+
+  return '<tr>' +
+    '<td style="padding:12px;background:var(--bg3);border-radius:10px 0 0 10px;">' +
+      '<div style="font-weight:800;font-size:13px;">' + r.name + '</div>' +
+      '<div style="font-size:11px;color:var(--t3);margin-top:2px;">' + r.email + '</div>' +
+    '</td>' +
+
+    '<td style="padding:12px;background:var(--bg3);font-weight:700;">' +
+      (r.daire || '—') +
+    '</td>' +
+
+    '<td style="padding:12px;background:var(--bg3);">' +
+      debtBadge +
+    '</td>' +
+
+    '<td style="padding:12px;background:var(--bg3);border-radius:0 10px 10px 0;">' +
+      '<button class="btn-no btn-s" onclick="askDeleteResident(' + r.id + ')">' +
+        '<i class="bi bi-trash"></i> Sil' +
+      '</button>' +
+    '</td>' +
+
+  '</tr>';
+}).join('');
+
+  document.getElementById('residentsAdmin').innerHTML =
+    '<div class="row g-3 mb-3">' +
+      '<div class="col-md-3 col-6"><div class="sc"><div class="sc-val" style="color:var(--ic);">' + mySiteRes().length + '</div><div class="sc-lbl">Toplam Sakin</div></div></div>' +
+      '<div class="col-md-3 col-6"><div class="sc"><div class="sc-val" style="color:var(--ok);">' +
+        mySiteRes().filter(r => (dues.filter(d => d.userId === r.id && d.status === 'paid').length) === 12).length +
+      '</div><div class="sc-lbl">Tam Ödeyen</div></div></div>' +
+      '<div class="col-md-3 col-6"><div class="sc"><div class="sc-val" style="color:var(--no);">' +
+        mySiteRes().filter(r => dues.some(d => d.userId === r.id && d.status !== 'paid')).length +
+      '</div><div class="sc-lbl">Borçlu Sakin</div></div></div>' +
+      '<div class="col-md-3 col-6"><div class="sc"><div class="sc-val" style="color:var(--warn);">' +
+        dues.filter(d => d.status !== 'paid').reduce((sum, d) => sum + Number(d.remainingAmount || 0), 0).toFixed(0) + ' ₺' +
+      '</div><div class="sc-lbl">Toplam Borç</div></div></div>' +
+    '</div>' +
+
+    '<div class="gc mb-3">' +
+      '<input id="residentSearch" class="fi" type="text" placeholder="Ad, soyad, e-posta veya daire no ile ara..." value="' + oldSearch + '" oninput="renderResidentsAdmin()">' +
+    '</div>' +
+
+    '<div class="gc" style="overflow-x:auto;">' +
+      '<table style="width:100%;border-collapse:separate;border-spacing:0 4px;">' +
+        '<thead><tr>' +
+          '<th style="color:var(--t3);font-size:10px;text-transform:uppercase;padding:4px 12px;text-align:left;">Sakin</th>' +
+          '<th style="color:var(--t3);font-size:10px;text-transform:uppercase;padding:4px 12px;">Daire</th>' +
+          '<th style="color:var(--t3);font-size:10px;text-transform:uppercase;padding:4px 12px;">Borç</th>' +
+          '<th style="color:var(--t3);font-size:10px;text-transform:uppercase;padding:4px 12px;">İşlem</th>' +
+        '</tr></thead>' +
+        '<tbody>' +
+          (rows || '<tr><td colspan="4" style="padding:16px;text-align:center;color:var(--t3);background:var(--bg3);border-radius:10px;">Sonuç bulunamadı</td></tr>') +
+        '</tbody>' +
+      '</table>' +
+    '</div>';
+
+  const searchInput = document.getElementById('residentSearch');
+  if (searchInput) {
+    searchInput.focus();
+    searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+  }
+}
+let residentToDelete = null;
+
+function askDeleteResident(id) {
+  residentToDelete = id;
+
+  document.getElementById('deleteConfirmText').value = '';
+  document.getElementById('btnDeleteResident').disabled = true;
+
+  openM('mDeleteResident');
+}
+
+
+
+
+
+function checkDeleteConfirm() {
+  const txt = document.getElementById('deleteConfirmText').value.trim();
+
+  document.getElementById('btnDeleteResident').disabled =
+    txt !== 'Evet silmek istediğime eminim';
+}
+
+async function confirmDeleteResident() {
+  if (!residentToDelete) {
+    toast('Silinecek sakin bulunamadı', 'no');
+    return;
+  }
+
+  try {
+    const res = await fetch(`http://localhost:8080/api/users/${residentToDelete}`, {
+      method: 'DELETE'
+    });
+
+    if (!res.ok) {
+      toast('Sakin silinemedi', 'no');
+      return;
+    }
+
+    closeM('mDeleteResident');
+
+    await loadUsers();
+    await loadSiteDues();
+    renderResidentsAdmin();
+
+    residentToDelete = null;
+
+    toast('Sakin başarıyla silindi', 'w');
+
+  } catch (error) {
+    console.error(error);
+    toast('Sakin silinemedi', 'no');
+  }
+}
+
+function renderSiteAdmin() {
+  document.getElementById('siteList').innerHTML='<div class="row g-3">'+
+    sites.map(s=>{
+      const res=users.filter(u=>u.role==='sakin'&&u.siteId===s.id).length;
+      const adm=users.filter(u=>u.role==='yonetici'&&u.siteId===s.id);
+      const mine=s.id===CU.siteId;
+      return '<div class="col-md-4"><div class="gc" style="border:1px solid var(--b2);">' +
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">' +
+        '<div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#6366f1,#a855f7);display:flex;align-items:center;justify-content:center;font-family:\'Outfit\',sans-serif;font-weight:800;font-size:16px;color:#fff;flex-shrink:0;">'+s.name.substring(0,2).toUpperCase()+'</div>' +
+        '<div><div style="font-family:\'Outfit\',sans-serif;font-size:15px;font-weight:800;">'+s.name+'</div><div style="font-size:11px;color:var(--t3);margin-top:1px;">'+s.addr+'</div></div></div>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">' +
+        '<span class="bx bx-ind"><i class="bi bi-people me-1"></i>'+res+' '+L('residentLbl')+'</span>' +
+        '<span class="bx bx-vio"><i class="bi bi-shield-check me-1"></i>'+adm.length+' '+L('adminLbl')+'</span>' +
+        (mine?'<span class="bx bx-ok"><i class="bi bi-check2 me-1"></i>'+L('yourSite')+'</span>':'') +
+        '</div><div style="font-size:12px;color:var(--t3);">'+( adm.map(a=>a.name).join(', ')||'—')+'</div>' +
+        '</div></div>';
+    }).join('')+'</div>';
+}
+
+window.addEventListener('DOMContentLoaded', async function () {
+  const savedUser = localStorage.getItem('apartixUser');
+
+  if (savedUser) {
+    CU = JSON.parse(savedUser);
+    await startApp();
+  } else {
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('auth-screen').style.display = 'flex';
+  }
+
+  ['lEmail', 'lPass'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        doLogin();
+      }
+    });
+  });
+});
+
+
+
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
