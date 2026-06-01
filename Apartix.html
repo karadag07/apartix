@@ -264,9 +264,9 @@ select.fi option{background:var(--bg3);}
         <div class="fg"><label class="lbl" id="lEmailLbl">E-POSTA</label><input type="email" class="inp" id="lEmail" placeholder="ornek@mail.com"></div>
         <div class="fg" style="margin-bottom:26px;"><label class="lbl" id="lPassLbl">ŞİFRE</label><input type="password" class="inp" id="lPass" placeholder="••••••••"></div>
         <div style="text-align:right;margin-top:-12px;margin-bottom:18px;">
-  <span onclick="openM('mForgotPass')" style="font-size:12px;color:var(--ia);cursor:pointer;font-weight:600;">
-    Şifremi Unuttum?
-  </span>
+  <span id="forgotPassTxt" onclick="openM('mForgotPass')" style="font-size:12px;color:var(--ia);cursor:pointer;font-weight:600;">
+  Şifremi Unuttum?
+</span>
 </div>
         <button class="btn-main" onclick="doLogin()"><i class="bi bi-arrow-right-circle" style="margin-right:8px;"></i><span id="loginBtnTxt">Giriş Yap</span></button>
         <div class="auth-hint" id="demoHint">Hoşgeldiniz! Rolünüzü seçip giriş yapınız.</div>
@@ -279,18 +279,18 @@ select.fi option{background:var(--bg3);}
           <button class="role-btn" id="rRB" onclick="selRegRole('sakin',this)"><i class="bi bi-house-door"></i> <span id="rRBTxt">Sakin</span></button>
         </div>
         <div class="fg" id="siteCreateBox">
-  <label class="lbl">SİTE / APARTMAN BİLGİLERİ</label>
+  <label class="lbl" id="siteApartmentInfoLbl">SİTE / APARTMAN BİLGİLERİ</label>
   <input type="text" class="inp" style="margin-bottom:8px;" id="rSiteName" placeholder="Site / Apartman adı">
   <input type="text" class="inp" id="rSiteAddr" placeholder="Adres">
 </div>
 
 <div class="fg" id="joinCodeBox" style="display:none;">
-  <label class="lbl">KATILIM KODU</label>
+  <label class="lbl" id="joinCodeLbl">KATILIM KODU</label>
   <input type="text" class="inp" id="rJoinCode" placeholder="Örn: GUNES-2026">
 </div>
         <div class="fg" id="daireWrap" style="display:none;"><label class="lbl" id="daireLbl">DAİRE NO</label><input type="text" class="inp" id="rDaire" placeholder="örn: 1A"></div>
         <div class="fg" id="moveInWrap" style="display:none;">
-  <label class="lbl">TAŞINMA AYI</label>
+  <label class="lbl" id="moveInMonthLbl">TAŞINMA AYI</label>
   <select class="inp" id="rMoveInMonth">
     <option value="1">Ocak</option>
     <option value="2">Şubat</option>
@@ -364,7 +364,7 @@ select.fi option{background:var(--bg3);}
         onclick="openM('mChangePass')"
         style="width:100%;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;">
   <i class="bi bi-key"></i>
-  <span>Şifre Değiştir</span>
+  <span id="changePassBtnTxt">Şifre Değiştir</span>
 </button>
 
   <button class="btn-out" onclick="doLogout()">
@@ -480,11 +480,11 @@ select.fi option{background:var(--bg3);}
 
 <div class="pg" id="pg-residents-admin">
   <div class="pg-head">
-    <div class="eyebrow">SAKİN YÖNETİMİ</div>
-    <div class="pg-title">Sakinler</div>
-    <div class="pg-sub">
-      Site sakinlerini görüntüleyin ve aidat durumlarını takip edin
-    </div>
+    <div class="eyebrow" id="residentsManageLbl">SAKİN YÖNETİMİ</div>
+    <div class="pg-title" id="residentsTitle">Sakinler</div>
+    <div class="pg-sub" id="residentsSubLbl">
+  Site sakinlerini görüntüleyin ve aidat durumlarını takip edin
+</div>
   </div>
 
   <div id="residentsAdmin"></div>
@@ -557,7 +557,7 @@ select.fi option{background:var(--bg3);}
 <div class="mo" id="mForgotPass">
   <div class="mb">
     <button class="mc" onclick="closeM('mForgotPass')"><i class="bi bi-x"></i></button>
-    <div class="mb-t">Şifremi Unuttum</div>
+    <div class="mb-t" id="forgotPassTitleLbl">Şifremi Unuttum</div>
 
     <div class="fg">
       <label class="fl">E-POSTA</label>
@@ -588,7 +588,7 @@ select.fi option{background:var(--bg3);}
 <div class="mo" id="mChangePass">
   <div class="mb">
     <button class="mc" onclick="closeM('mChangePass')"><i class="bi bi-x"></i></button>
-    <div class="mb-t">Şifre Değiştir</div>
+    <div class="mb-t" id="changePassTitleLbl">Şifre Değiştir</div>
 
     <div class="fg">
       <label class="fl">MEVCUT ŞİFRE</label>
@@ -614,17 +614,17 @@ select.fi option{background:var(--bg3);}
 
 <div class="mo" id="mDeleteResident">
   <div class="mb">
-    <div class="modal-title">⚠ Sakin Sil</div>
+    <div class="modal-title" id="deleteResidentTitle">⚠ Sakin Sil</div>
 
-    <p style="color:var(--t2);margin-bottom:12px;">
-      Bu işlem geri alınamaz.
-    </p>
+    <p id="cannotUndoTxt" style="color:var(--t2);margin-bottom:12px;">
+  Bu işlem geri alınamaz.
+</p>
 
     <p style="font-size:12px;color:var(--warn);">
-      Silme işlemini onaylamak için:
-      <b>Evet silmek istediğime eminim</b>
-      yazın.
-    </p>
+  <span id="deleteConfirmInfo">Silme işlemini onaylamak için:</span>
+  <b id="deleteConfirmSentence">Evet silmek istediğime eminim</b>
+  <span id="deleteConfirmWrite">yazın.</span>
+</p>
 
     <input
       id="deleteConfirmText"
@@ -633,17 +633,17 @@ select.fi option{background:var(--bg3);}
       oninput="checkDeleteConfirm()">
 
     <div style="display:flex;gap:8px;margin-top:16px;">
-      <button class="btn-g" onclick="closeM('mDeleteResident')">
-        Vazgeç
-      </button>
+      <button class="btn-g" id="deleteCancelBtn" onclick="closeM('mDeleteResident')">
+  Vazgeç
+</button>
 
       <button
-        id="btnDeleteResident"
-        class="btn-no"
-        disabled
-        onclick="confirmDeleteResident()">
-        Sil
-      </button>
+  id="btnDeleteResident"
+  class="btn-no"
+  disabled
+  onclick="confirmDeleteResident()">
+  <span id="deleteConfirmBtnTxt">Sil</span>
+</button>
     </div>
   </div>
 </div>
@@ -709,7 +709,78 @@ const TR = {
   voteSelf:"Kendinize oy veremezsiniz!", voteDup:"Zaten oy kullandınız!", voteOk:"Oyunuz kaydedildi!",
   banned:'⚠️ Uygunsuz ifade: "', empty:"Boş olamaz",
   payFill:"Lütfen kart bilgilerini doldurun", paying:"Ödeme işleniyor...", payOk:"Ödeme tamamlandı! 🎉",
-  eyeDash:"GENEL BAKIŞ", dashTitle:"Kontrol Paneli"
+  eyeDash:"GENEL BAKIŞ", dashTitle:"Kontrol Paneli",
+  forgotPass:"Şifremi Unuttum?",
+changePass:"Şifre Değiştir",
+forgotPassTitle:"Şifremi Unuttum",
+changePassTitle:"Şifre Değiştir",
+currentPass:"MEVCUT ŞİFRE",
+newPass:"YENİ ŞİFRE",
+newPassAgain:"YENİ ŞİFRE TEKRAR",
+refreshPass:"Şifreyi Yenile",
+updatePass:"Şifreyi Güncelle",
+siteApartmentInfo:"SİTE / APARTMAN BİLGİLERİ",
+joinCode:"KATILIM KODU",
+moveInMonth:"TAŞINMA AYI",
+residents:"Sakinler",
+residentsManage:"SAKİN YÖNETİMİ",
+residentsSub:"Site sakinlerini görüntüleyin ve aidat durumlarını takip edin",
+deleteResident:"Sakin Sil",
+cannotUndo:"Bu işlem geri alınamaz.",
+deleteConfirmText:"Silme işlemini onaylamak için:",
+confirmSentence:"Evet silmek istediğime eminim",
+write:"yazın.",
+giveUp:"Vazgeç",
+deleteBtn:"Sil",
+debt:"Borç",
+noDebt:"Borç Yok",
+totalDebtPlain:"Toplam Borç",
+debtResident:"Borçlu Sakin",
+fullPaid:"Tam Ödeyen",
+searchResident:"Ad, soyad, e-posta veya daire no ile ara...",
+searchDue:"Sakin adı veya soyadı ile ara...",
+noResult:"Sonuç bulunamadı",
+notResponsible:"Sorumlu Değil",
+notYet:"Henüz Gelmedi",
+locked:"Kilitli",
+copy:"Kopyala",
+joinCodeCopied:"Kod kopyalandı",
+paySelectMonth:"Ödemek istediğiniz ayları seçin",
+amountFee:"Aidat",
+interestFee:"Faiz",
+backendError:"Backend bağlantısı kurulamadı",
+allFields:"Tüm alanları doldurun",
+passwordChanged:"Şifre başarıyla değiştirildi",
+passwordRenewed:"Şifre başarıyla yenilendi",
+passwordMismatch:"Şifreler eşleşmiyor",
+newPasswordMismatch:"Yeni şifreler eşleşmiyor",
+newPasswordShort:"Yeni şifre en az 6 karakter olmalı",
+low:"Düşük",
+medium:"Orta",
+high:"Yüksek",
+urgent:"Acil",
+noWaitingFault:"Bekleyen arıza bulunmuyor.",
+noInProgressFault:"İşlemde arıza bulunmuyor.",
+noSolvedFault:"Çözülmüş arıza bulunmuyor.",
+apartment:"Daire",
+annLoadErr:"Duyurular yüklenemedi",
+faultLoadErr:"Arızalar yüklenemedi",
+duesLoadErr:"Aidatlar yüklenemedi",
+voteLoadErr:"Oylama verileri yüklenemedi",
+sitesLoadErr:"Siteler yüklenemedi",
+usersLoadErr:"Kullanıcılar yüklenemedi",
+siteDuesLoadErr:"Site aidatları yüklenemedi",
+faultSaveErr:"Arıza kaydedilemedi",
+statusUpdateErr:"Durum güncellenemedi",
+faultDeleteErr:"Arıza silinemedi",
+voteSaveErr:"Oy kaydedilemedi",
+paymentFailedErr:"Ödeme işlemi başarısız",
+noPayableDebt:"Ödenecek borç bulunmuyor",
+months:[
+'Ocak','Şubat','Mart','Nisan',
+'Mayıs','Haziran','Temmuz','Ağustos',
+'Eylül','Ekim','Kasım','Aralık'
+]
 };
 const EN = {
   tagline:"Apartment & Site Management Platform",
@@ -771,9 +842,81 @@ const EN = {
   voteSelf:"You cannot vote for yourself!", voteDup:"You have already voted!", voteOk:"Vote recorded!",
   banned:'⚠️ Inappropriate content: "', empty:"Cannot be empty",
   payFill:"Please fill in all card details", paying:"Processing payment...", payOk:"Payment completed! 🎉",
-  eyeDash:"OVERVIEW", dashTitle:"Dashboard"
+  eyeDash:"OVERVIEW", dashTitle:"Dashboard",
+  forgotPass:"Forgot Password?",
+changePass:"Change Password",
+forgotPassTitle:"Forgot Password",
+changePassTitle:"Change Password",
+currentPass:"CURRENT PASSWORD",
+newPass:"NEW PASSWORD",
+noPayableDebt:"No payable debt found",
+newPassAgain:"CONFIRM NEW PASSWORD",
+refreshPass:"Reset Password",
+updatePass:"Update Password",
+siteApartmentInfo:"SITE / APARTMENT INFORMATION",
+joinCode:"JOIN CODE",
+moveInMonth:"MOVE-IN MONTH",
+residents:"Residents",
+residentsManage:"RESIDENT MANAGEMENT",
+residentsSub:"View residents and track their fee status",
+deleteResident:"Delete Resident",
+cannotUndo:"This action cannot be undone.",
+deleteConfirmText:"To confirm deletion:",
+confirmSentence:"Yes, I am sure I want to delete",
+write:"type it.",
+giveUp:"Cancel",
+deleteBtn:"Delete",
+debt:"Debt",
+noDebt:"No Debt",
+totalDebtPlain:"Total Debt",
+debtResident:"Residents in Debt",
+fullPaid:"Fully Paid",
+searchResident:"Search by name, email or apartment no...",
+searchDue:"Search by resident name...",
+noResult:"No results found",
+notResponsible:"Not Responsible",
+notYet:"Not Due Yet",
+locked:"Locked",
+copy:"Copy",
+joinCodeCopied:"Code copied",
+paySelectMonth:"Select the months you want to pay",
+amountFee:"Fee",
+interestFee:"Interest",
+backendError:"Backend connection could not be established",
+allFields:"Please fill in all fields",
+passwordChanged:"Password changed successfully",
+passwordRenewed:"Password reset successfully",
+passwordMismatch:"Passwords do not match",
+newPasswordMismatch:"New passwords do not match",
+newPasswordShort:"New password must be at least 6 characters",
+low:"Low",
+medium:"Medium",
+high:"High",
+urgent:"Urgent",
+noWaitingFault:"No pending faults found.",
+noInProgressFault:"No faults in progress.",
+noSolvedFault:"No resolved faults found.",
+apartment:"Apartment",
+annLoadErr:"Announcements could not be loaded",
+faultLoadErr:"Faults could not be loaded",
+duesLoadErr:"Dues could not be loaded",
+voteLoadErr:"Voting data could not be loaded",
+sitesLoadErr:"Sites could not be loaded",
+usersLoadErr:"Users could not be loaded",
+siteDuesLoadErr:"Site dues could not be loaded",
+faultSaveErr:"Fault could not be saved",
+statusUpdateErr:"Status could not be updated",
+faultDeleteErr:"Fault could not be deleted",
+voteSaveErr:"Vote could not be saved",
+paymentFailedErr:"Payment failed",
+months:[
+'January','February','March','April',
+'May','June','July','August',
+'September','October','November','December'
+]
 };
 const DE = {
+
   tagline:"Intelligentes Gebäudemanagementsystem",
   loginTab:"Anmelden", regTab:"Registrieren",
   roleAdmin:"Verwalter", roleRes:"Bewohner",
@@ -784,6 +927,7 @@ const DE = {
   siteOpt:"GEBÄUDE OPTION", joinSite:"Vorhandenem beitreten", newSite:"Neue Anlage",
   daireLbl:"WOHNUNGSNR.", nameLbl:"VOLLSTÄNDIGER NAME",
   logoutTxt:"Abmelden", sbTag:"Gebäudeverwaltung",
+  noPayableDebt:"Keine zahlbare Schuld gefunden",
   navDash:"Dashboard", navAnn:"Ankündigungen", navFault:"Störungsverwaltung",
   navFaultR:"Meine Störungen", navVote:"Verwalterwald",
   navAidat:"Gebühren", navAidatR:"Meine Gebühren", navSite:"Anlageverwaltung",
@@ -833,7 +977,77 @@ const DE = {
   voteSelf:"Sie können nicht für sich selbst stimmen!", voteDup:"Bereits abgestimmt!", voteOk:"Stimme erfasst!",
   banned:'⚠️ Unangemessener Inhalt: "', empty:"Darf nicht leer sein",
   payFill:"Bitte alle Kartendetails ausfüllen", paying:"Zahlung wird verarbeitet...", payOk:"Zahlung erfolgreich! 🎉",
-  eyeDash:"ÜBERSICHT", dashTitle:"Dashboard"
+  eyeDash:"ÜBERSICHT", dashTitle:"Dashboard",
+  forgotPass:"Passwort vergessen?",
+changePass:"Passwort ändern",
+forgotPassTitle:"Passwort vergessen",
+changePassTitle:"Passwort ändern",
+currentPass:"AKTUELLES PASSWORT",
+newPass:"NEUES PASSWORT",
+newPassAgain:"NEUES PASSWORT WIEDERHOLEN",
+refreshPass:"Passwort erneuern",
+updatePass:"Passwort aktualisieren",
+siteApartmentInfo:"GEBÄUDE / WOHNANLAGE INFORMATIONEN",
+joinCode:"BEITRITTSCODE",
+moveInMonth:"EINZUGSMONAT",
+residents:"Bewohner",
+residentsManage:"BEWOHNER VERWALTUNG",
+residentsSub:"Bewohner anzeigen und Gebührenstatus verfolgen",
+deleteResident:"Bewohner löschen",
+cannotUndo:"Dieser Vorgang kann nicht rückgängig gemacht werden.",
+deleteConfirmText:"Zum Bestätigen des Löschens:",
+confirmSentence:"Ja, ich bin sicher, dass ich löschen möchte",
+write:"schreiben.",
+giveUp:"Abbrechen",
+deleteBtn:"Löschen",
+debt:"Schuld",
+noDebt:"Keine Schuld",
+totalDebtPlain:"Gesamtschuld",
+debtResident:"Bewohner mit Schulden",
+fullPaid:"Voll bezahlt",
+searchResident:"Nach Name, E-Mail oder Wohnungsnummer suchen...",
+searchDue:"Nach Bewohnername suchen...",
+noResult:"Kein Ergebnis gefunden",
+notResponsible:"Nicht verantwortlich",
+notYet:"Noch nicht fällig",
+locked:"Gesperrt",
+copy:"Kopieren",
+joinCodeCopied:"Code kopiert",
+paySelectMonth:"Wählen Sie die Monate aus, die Sie bezahlen möchten",
+amountFee:"Gebühr",
+interestFee:"Zinsen",
+backendError:"Backend-Verbindung konnte nicht hergestellt werden",
+allFields:"Bitte alle Felder ausfüllen",
+passwordChanged:"Passwort erfolgreich geändert",
+passwordRenewed:"Passwort erfolgreich erneuert",
+passwordMismatch:"Passwörter stimmen nicht überein",
+newPasswordMismatch:"Neue Passwörter stimmen nicht überein",
+newPasswordShort:"Neues Passwort muss mindestens 6 Zeichen lang sein",
+low:"Niedrig",
+medium:"Mittel",
+high:"Hoch",
+urgent:"Dringend",
+noWaitingFault:"Keine ausstehenden Störungen gefunden.",
+noInProgressFault:"Keine Störungen in Bearbeitung.",
+noSolvedFault:"Keine behobenen Störungen gefunden.",
+apartment:"Wohnung",
+annLoadErr:"Ankündigungen konnten nicht geladen werden",
+faultLoadErr:"Störungen konnten nicht geladen werden",
+duesLoadErr:"Gebühren konnten nicht geladen werden",
+voteLoadErr:"Wahldaten konnten nicht geladen werden",
+sitesLoadErr:"Anlagen konnten nicht geladen werden",
+usersLoadErr:"Benutzer konnten nicht geladen werden",
+siteDuesLoadErr:"Anlagengebühren konnten nicht geladen werden",
+faultSaveErr:"Störung konnte nicht gespeichert werden",
+statusUpdateErr:"Status konnte nicht aktualisiert werden",
+faultDeleteErr:"Störung konnte nicht gelöscht werden",
+voteSaveErr:"Stimme konnte nicht gespeichert werden",
+paymentFailedErr:"Zahlung fehlgeschlagen",
+months:[
+'Januar','Februar','März','April',
+'Mai','Juni','Juli','August',
+'September','Oktober','November','Dezember'
+]
 };
 const AR = {
   tagline:"منصة إدارة المباني والمجمعات الذكية",
@@ -856,6 +1070,7 @@ const AR = {
   eyeFaultR:"الدعم", titleFaultR:"طلبات الأعطال", subFaultR:"الإبلاغ عن الأعطال ومتابعتها", newFaultBtn:"الإبلاغ عن عطل",
   fTotalLbl:"إجمالي الأعطال", fPendLbl:"قيد الانتظار", fDoneLbl:"تم الحل",
   eyeVote:"الانتخاب", titleVote:"انتخاب المدير", subVote:"انتخاب مدير الموقع — 2026",
+  noPayableDebt:"لا يوجد دين قابل للدفع",
   voteElection:"انتخاب المدير — 2026", voteRule:"لا يمكنك التصويت لنفسك. يحق لكل مستخدم التصويت مرة واحدة فقط.",
   voteActive:"نشط", voteResults:"النتائج المباشرة", voteLbl:"أصوات", votedLbl:"صوّت",
   eyeAidatA:"المالية", titleAidatA:"رسوم الصيانة", subAidatA:"حالة رسوم 2026 لجميع السكان",
@@ -895,7 +1110,77 @@ const AR = {
   voteSelf:"لا يمكنك التصويت لنفسك!", voteDup:"لقد صوّتت بالفعل!", voteOk:"تم تسجيل صوتك!",
   banned:'⚠️ محتوى غير لائق: "', empty:"لا يمكن أن يكون فارغاً",
   payFill:"يرجى ملء بيانات البطاقة", paying:"جارٍ معالجة الدفع...", payOk:"تم الدفع بنجاح! 🎉",
-  eyeDash:"لوحة التحكم", dashTitle:"لوحة التحكم"
+  eyeDash:"لوحة التحكم", dashTitle:"لوحة التحكم",
+  forgotPass:"هل نسيت كلمة المرور؟",
+changePass:"تغيير كلمة المرور",
+forgotPassTitle:"نسيت كلمة المرور",
+changePassTitle:"تغيير كلمة المرور",
+currentPass:"كلمة المرور الحالية",
+newPass:"كلمة المرور الجديدة",
+newPassAgain:"تأكيد كلمة المرور الجديدة",
+refreshPass:"إعادة تعيين كلمة المرور",
+updatePass:"تحديث كلمة المرور",
+siteApartmentInfo:"معلومات الموقع / الشقة",
+joinCode:"رمز الانضمام",
+moveInMonth:"شهر الانتقال",
+residents:"السكان",
+residentsManage:"إدارة السكان",
+residentsSub:"عرض السكان ومتابعة حالة الرسوم",
+deleteResident:"حذف ساكن",
+cannotUndo:"لا يمكن التراجع عن هذا الإجراء.",
+deleteConfirmText:"لتأكيد الحذف:",
+confirmSentence:"نعم، أنا متأكد أنني أريد الحذف",
+write:"اكتب ذلك.",
+giveUp:"إلغاء",
+deleteBtn:"حذف",
+debt:"الدين",
+noDebt:"لا يوجد دين",
+totalDebtPlain:"إجمالي الدين",
+debtResident:"السكان المدينون",
+fullPaid:"مدفوع بالكامل",
+searchResident:"ابحث بالاسم أو البريد الإلكتروني أو رقم الشقة...",
+searchDue:"ابحث باسم الساكن...",
+noResult:"لم يتم العثور على نتائج",
+notResponsible:"غير مسؤول",
+notYet:"لم يحِن موعده بعد",
+locked:"مغلق",
+copy:"نسخ",
+joinCodeCopied:"تم نسخ الرمز",
+paySelectMonth:"اختر الأشهر التي تريد دفعها",
+amountFee:"الرسوم",
+interestFee:"الفائدة",
+backendError:"تعذر الاتصال بالخادم",
+allFields:"يرجى ملء جميع الحقول",
+passwordChanged:"تم تغيير كلمة المرور بنجاح",
+passwordRenewed:"تمت إعادة تعيين كلمة المرور بنجاح",
+passwordMismatch:"كلمات المرور غير متطابقة",
+newPasswordMismatch:"كلمات المرور الجديدة غير متطابقة",
+newPasswordShort:"يجب أن تكون كلمة المرور الجديدة 6 أحرف على الأقل",
+low:"منخفض",
+medium:"متوسط",
+high:"مرتفع",
+urgent:"عاجل",
+noWaitingFault:"لا توجد أعطال قيد الانتظار.",
+noInProgressFault:"لا توجد أعطال قيد المعالجة.",
+noSolvedFault:"لا توجد أعطال محلولة.",
+apartment:"الشقة",
+annLoadErr:"تعذر تحميل الإعلانات",
+faultLoadErr:"تعذر تحميل الأعطال",
+duesLoadErr:"تعذر تحميل الرسوم",
+voteLoadErr:"تعذر تحميل بيانات التصويت",
+sitesLoadErr:"تعذر تحميل المواقع",
+usersLoadErr:"تعذر تحميل المستخدمين",
+siteDuesLoadErr:"تعذر تحميل رسوم الموقع",
+faultSaveErr:"تعذر حفظ العطل",
+statusUpdateErr:"تعذر تحديث الحالة",
+faultDeleteErr:"تعذر حذف العطل",
+voteSaveErr:"تعذر تسجيل الصوت",
+paymentFailedErr:"فشلت عملية الدفع",
+months:[
+'يناير','فبراير','مارس','أبريل',
+'مايو','يونيو','يوليو','أغسطس',
+'سبتمبر','أكتوبر','نوفمبر','ديسمبر'
+]
 };
 
 const LANGS = { tr: TR, en: EN, de: DE, ar: AR };
@@ -940,7 +1225,24 @@ function applyLang() {
     mFCancel:'cancel', mFSubmitTxt:'submit',
     mRTitle:'mRTitle', mRLbl:'mRLbl', mRCancel:'cancel', mRSubmitTxt:'replyBtn',
     mCTitle:'mCTitle', mCLbl:'mCLbl', mCCancel:'cancel', mCSubmitTxt:'comBtn',
-    eyeDash:'eyeDash'
+    eyeDash:'eyeDash',
+    forgotPassTxt:'forgotPass',
+changePassBtnTxt:'changePass',
+siteApartmentInfoLbl:'siteApartmentInfo',
+joinCodeLbl:'joinCode',
+moveInMonthLbl:'moveInMonth',
+residentsManageLbl:'residentsManage',
+residentsTitle:'residents',
+residentsSubLbl:'residentsSub',
+forgotPassTitleLbl:'forgotPassTitle',
+changePassTitleLbl:'changePassTitle',
+deleteResidentTitle:'deleteResident',
+cannotUndoTxt:'cannotUndo',
+deleteConfirmInfo:'deleteConfirmText',
+deleteConfirmSentence:'confirmSentence',
+deleteConfirmWrite:'write',
+deleteCancelBtn:'giveUp',
+deleteConfirmBtnTxt:'deleteBtn'
   };
 
   Object.keys(map).forEach(id => {
@@ -988,7 +1290,7 @@ function checkBanned(text) { const low = text.toLowerCase(); return BANNED_WORDS
 // ─────────────────────────────────────────────────────────────
 const FEE = 500;
 const DAILY_RATE = 0.01;
-const MONTHS = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+const MONTHS = () => I18N[lang].months;
 
 let sites = [];
 let nextSiteId = 2;
@@ -1065,7 +1367,7 @@ async function loadAnnouncements() {
 
   } catch (error) {
     console.error(error);
-    toast('Duyurular yüklenemedi', 'no');
+    toast(L('annLoadErr'), 'no');
   }
 }
 
@@ -1075,12 +1377,12 @@ async function changePassword() {
   const newPassword2 = document.getElementById('newPass2').value;
 
   if (!oldPassword || !newPassword || !newPassword2) {
-    toast('Tüm alanları doldurun', 'no');
+    toast(L('allFields'), 'no');
     return;
   }
 
   if (newPassword.length < 6) {
-    toast('Yeni şifre en az 6 karakter olmalı', 'no');
+    toast(L('newPasswordShort'), 'no');
     return;
   }
 
@@ -1104,7 +1406,7 @@ async function changePassword() {
   }
 
   closeM('mChangePass');
-  toast('Şifre başarıyla değiştirildi', 'ok');
+  toast(L('passwordChanged'));
 
   document.getElementById('oldPass').value = '';
   document.getElementById('newPass').value = '';
@@ -1118,17 +1420,17 @@ async function forgotPassword() {
   const newPassword2 = document.getElementById('fpNewPass2').value;
 
   if (!email || !apartmentNo || !newPassword || !newPassword2) {
-    toast('Tüm alanları doldurun', 'no');
+    toast(L('allFields'), 'no');
     return;
   }
 
   if (newPassword.length < 6) {
-    toast('Yeni şifre en az 6 karakter olmalı', 'no');
+    toast(L('newPasswordShort'), 'no');
     return;
   }
 
   if (newPassword !== newPassword2) {
-    toast('Şifreler eşleşmiyor', 'no');
+    toast(L('passwordMismatch'), 'no');
     return;
   }
 
@@ -1154,7 +1456,7 @@ async function forgotPassword() {
   document.getElementById('fpNewPass').value = '';
   document.getElementById('fpNewPass2').value = '';
 
-  toast('Şifre başarıyla yenilendi', 'ok');
+  toast(L('passwordRenewed'), 'ok');
 }
 
 async function loadComments(announcementId) {
@@ -1203,7 +1505,7 @@ time: f.createdAt
 
   } catch (error) {
     console.error(error);
-    toast('Arızalar yüklenemedi', 'no');
+    toast(L('faultLoadErr'), 'no');
   }
 }
 async function loadDues() {
@@ -1219,7 +1521,7 @@ async function loadDues() {
 
   } catch (error) {
     console.error(error);
-    toast('Aidatlar yüklenemedi', 'no');
+    toast(L('duesLoadErr'), 'no');
   }
 }
 async function loadVoteData() {
@@ -1245,7 +1547,7 @@ async function loadVoteData() {
 
   } catch (error) {
     console.error(error);
-    toast('Oylama verileri yüklenemedi', 'no');
+    toast(L('voteLoadErr'), 'no');
   }
 }
 async function loadSites() {
@@ -1262,7 +1564,7 @@ async function loadSites() {
 
   } catch (error) {
     console.error(error);
-    toast('Siteler yüklenemedi', 'no');
+    toast(L('sitesLoadErr'), 'no');
   }
 }
 async function loadUsers() {
@@ -1283,7 +1585,7 @@ async function loadUsers() {
 
   } catch (error) {
     console.error(error);
-    toast('Kullanıcılar yüklenemedi', 'no');
+    toast(L('usersLoadErr'), 'no');
   }
 }
 
@@ -1307,7 +1609,7 @@ async function loadSiteDues() {
 
   } catch (error) {
     console.error(error);
-    toast('Site aidatları yüklenemedi', 'no');
+    toast(L('siteDuesLoadErr'), 'no');
   }
 }
 function myFaults()    { return faults.filter(f => f.siteId === CU.siteId); }
@@ -1317,6 +1619,14 @@ function SB(s) { return {Beklemede:'bx-no','İşlemde':'bx-warn','Çözüldü':'
 function LS(s) { return {Beklemede:L('waiting'),'İşlemde':L('inProg'),'Çözüldü':L('solved')}[s]||s; }
 function CB(c) { return {Genel:'bx-ind',Bakım:'bx-warn',Toplantı:'bx-info',Acil:'bx-no'}[c]||'bx-neu'; }
 function PB(p) { return {Düşük:'bx-info',Orta:'bx-warn',Yüksek:'bx-no',Acil:'bx-no'}[p]||'bx-neu'; }
+function LP(p) {
+  return {
+    'Düşük': L('low'),
+    'Orta': L('medium'),
+    'Yüksek': L('high'),
+    'Acil': L('urgent')
+  }[p] || p;
+}
 function FI(t) { return {Elektrik:'bi-lightning-charge','Su / Tesisat':'bi-droplet','Asansör':'bi-arrows-vertical','Isıtma':'bi-thermometer-half','Ortak Alan':'bi-building',Diğer:'bi-wrench'}[t]||'bi-tools'; }
 function TC()  { const d=document.documentElement.getAttribute('data-theme')==='dark'; return {tc:d?'#8fa3cc':'#64748b',gc:d?'rgba(255,255,255,.04)':'rgba(0,0,0,.04)'}; }
 
@@ -1417,7 +1727,7 @@ async function doLogin() {
 
   } catch (error) {
     console.error(error);
-    toast('Backend bağlantısı kurulamadı', 'no');
+    toast(L('backendError'), 'no');
   }
 }
 async function doRegister() {
@@ -1501,7 +1811,7 @@ const moveInMonth =
 
   } catch (error) {
     console.error(error);
-    toast('Backend bağlantısı kurulamadı', 'no');
+    toast(L('backendError'), 'no');
   }
 }
 
@@ -1552,7 +1862,7 @@ function buildNav() {
       {ic:'bi-tools',       lb:L('navFault'),  pg:'fault-admin'},
       {ic:'bi-cash-coin',   lb:L('navAidat'),  pg:'aidat-admin'},
       {ic:'bi-person-check',lb:L('navVote'),   pg:'vote'},
-      {ic:'bi-people',      lb:'Sakinler',     pg:'residents-admin'},
+      {ic:'bi-people', lb:L('residents'), pg:'residents-admin'},
       {ic:'bi-buildings',   lb:L('navSite'),   pg:'site-admin'},
     ]}
   ] : [
@@ -1825,13 +2135,13 @@ const unpaidDues = responsibleDues.filter(d => d.status !== 'paid');
   if (monthNo > currentMonth) {
     return '<div class="col-md-1 col-3"><div class="mt" style="opacity:.45;background:rgba(107,114,128,.15);border:1px solid rgba(107,114,128,.2);color:#9ca3af;">' +
       m.substring(0, 3) +
-      '<div class="mt-s">Kilitli</div></div></div>';
+      '<div class="mt-s">' + L('locked') + '</div>';
   }
 
   if (monthNo < joinedMonth) {
     return '<div class="col-md-1 col-3"><div class="mt" style="background:rgba(107,114,128,.18);border:1px solid rgba(107,114,128,.25);color:#9ca3af;">' +
       m.substring(0, 3) +
-      '<div class="mt-s">Sorumlu Değil</div></div></div>';
+      '<div class="mt-s">' + L('notResponsible') + '</div>';
   }
 
   const due = dues.find(d => d.month === monthNo);
@@ -1923,7 +2233,7 @@ async function createAnn() {
 
   } catch (error) {
     console.error(error);
-    toast('Backend bağlantısı kurulamadı', 'no');
+    toast(L('backendError'), 'no');
   }
 }
 async function delAnn(id) {
@@ -2037,13 +2347,13 @@ function renderFaultAdmin() {
       '<div style="flex:1;">' +
         '<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:5px;">' +
           '<div class="f-t">' + f.type + '</div>' +
-          '<span class="bx ' + PB(f.priority) + '">' + f.priority + '</span>' +
+          '<span class="bx ' + PB(f.priority) + '">' + LP(f.priority) + '</span>' +
           '<span class="bx ' + SB(f.status) + '">' + LS(f.status) + '</span>' +
         '</div>' +
 
         '<div class="f-m">' +
           '<i class="bi bi-person me-1"></i>' + f.userName +
-' · Daire: ' + (f.userApartment || '-') +
+' · ' + L('apartment') + ': ' + (f.userApartment || '-') +
 ' · <i class="bi bi-calendar3 me-1"></i>' + f.date +
 ' · <i class="bi bi-clock me-1"></i>' + f.time +
         '</div>' +
@@ -2079,9 +2389,9 @@ function renderFaultAdmin() {
   }
 
   document.getElementById('faultListAdmin').innerHTML =
-    section('Beklemede', 'bi-hourglass-split', 'var(--warn)', waiting, 'Bekleyen arıza bulunmuyor.') +
-    section('İşlemde', 'bi-tools', 'var(--info)', inProgress, 'İşlemde arıza bulunmuyor.') +
-    section('Çözüldü', 'bi-check-circle', 'var(--ok)', solved, 'Çözülmüş arıza bulunmuyor.');
+    section(L('waiting'), 'bi-hourglass-split', 'var(--warn)', waiting, L('noWaitingFault')) +
+section(L('inProg'), 'bi-tools', 'var(--info)', inProgress, L('noInProgressFault')) +
+section(L('solved'), 'bi-check-circle', 'var(--ok)', solved, L('noSolvedFault'));
 }function renderFaultRes() {
   const mf = faults.filter(f => f.userId === CU.id);
   const af = myFaults();
@@ -2094,7 +2404,7 @@ function renderFaultAdmin() {
         '<div style="flex:1;">' +
           '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">' +
             '<div style="font-weight:700;font-size:13px;">' + f.type + '</div>' +
-            '<span class="bx ' + PB(f.priority) + '">' + f.priority + '</span>' +
+            '<span class="bx ' + PB(f.priority) + '">' + LP(f.priority) + '</span>' +
             '<span class="bx ' + SB(f.status) + '">' + LS(f.status) + '</span>' +
           '</div>' +
           '<div style="font-size:11px;color:var(--t3);">' +
@@ -2115,7 +2425,7 @@ function renderFaultAdmin() {
         '<div style="flex:1;">' +
           '<div style="font-size:13px;font-weight:600;">' +
             f.type +
-            '<span style="color:var(--t3);font-weight:400;"> · ' + f.userName + ' · Daire: ' + (f.userApartment || '-') + '</span>' +
+            '<span style="color:var(--t3);font-weight:400;"> · ' + f.userName + ' · ' + L('apartment') + ': ' + (f.userApartment || '-') + '</span>' +
           '</div>' +
           '<div style="font-size:11px;color:var(--t3);">' +
             '<i class="bi bi-calendar3 me-1"></i>' + f.date +
@@ -2159,7 +2469,7 @@ async function createFault() {
     });
 
     if (!res.ok) {
-      toast('Arıza kaydedilemedi', 'no');
+      toast(L('faultSaveErr'), 'no');
       return;
     }
 
@@ -2173,7 +2483,7 @@ async function createFault() {
 
   } catch (error) {
     console.error(error);
-    toast('Backend bağlantısı kurulamadı', 'no');
+    toast(L('backendError'), 'no');
   }
 }
 async function chFault(id, st) {
@@ -2198,7 +2508,7 @@ async function chFault(id, st) {
     );
 
     if (!res.ok) {
-      toast('Durum güncellenemedi', 'no');
+      toast(L('statusUpdateErr'), 'no');
       return;
     }
 
@@ -2209,7 +2519,7 @@ async function chFault(id, st) {
 
   } catch (error) {
     console.error(error);
-    toast('Backend bağlantısı kurulamadı', 'no');
+    toast(L('backendError'), 'no');
   }
 }
 async function delFault(id) {
@@ -2219,7 +2529,7 @@ async function delFault(id) {
     });
 
     if (!res.ok) {
-      toast('Arıza silinemedi', 'no');
+      toast(L('faultDeleteErr'), 'no');
       return;
     }
 
@@ -2353,7 +2663,7 @@ async function doVote(optionId, candidateUserId) {
 
   } catch (error) {
     console.error(error);
-    toast('Oy kaydedilemedi', 'no');
+    toast(L('voteSaveErr'), 'no');
   }
 }
 
@@ -2504,7 +2814,7 @@ const responsibleDues = dues.filter(d =>
           border:1px solid rgba(107,114,128,.2);
         ">
         ${m.substring(0,3)}
-        <div class="mt-s">Henüz Gelmedi</div>
+        <div class="mt-s">${L('notYet')}</div>
       </div>
     </div>
   `;
@@ -2515,7 +2825,7 @@ const responsibleDues = dues.filter(d =>
         <div class="col-md-1 col-3">
           <div class="mt" style="background:rgba(107,114,128,.18);border:1px solid rgba(107,114,128,.25);color:#9ca3af;">
             ${m.substring(0, 3)}
-            <div class="mt-s">Sorumlu Değil</div>
+            <div class="mt-s">${L('notResponsible')}</div>
           </div>
         </div>
       `;
@@ -2615,7 +2925,7 @@ function renderPaymentSelection() {
   document.getElementById('payAmt').textContent = total.toFixed(0) + ' ₺';
 
   document.getElementById('paySummary').innerHTML =
-    '<div style="font-size:13px;color:var(--t3);margin-bottom:14px;">Ödemek istediğiniz ayları seçin</div>' +
+    '<div style="font-size:13px;color:var(--t3);margin-bottom:14px;">' + L('paySelectMonth') + '</div>' +
 
     '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;">' +
       payDues.map(d => {
@@ -2649,7 +2959,7 @@ function renderPaymentSelection() {
       const totalRow = Number(d.remainingAmount || 0);
 
       return '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--b1);font-size:13px;">' +
-        '<span style="color:var(--t3);">' + monthName + ' 2026 — Aidat: ' + amount.toFixed(0) + ' ₺ + Faiz: ' + lateFee.toFixed(0) + ' ₺</span>' +
+        '<span style="color:var(--t3);">' + monthName + ' 2026 — ' + L('amountFee') + ': ' + amount.toFixed(0) + ' ₺ + ' + L('interestFee') + ': ' + lateFee.toFixed(0) + ' ₺</span>' +
         '<span style="color:var(--no);font-weight:700;">' + totalRow.toFixed(0) + ' ₺</span>' +
       '</div>';
     }).join('') +
@@ -2700,7 +3010,7 @@ const unpaidDues = (window._paymentDues || []).filter(d =>
 );
 
   if (unpaidDues.length === 0) {
-    toast('Ödenecek borç bulunmuyor', 'w');
+    toast(L('noPayableDebt'), 'w');
     return;
   }
 
@@ -2723,7 +3033,7 @@ const unpaidDues = (window._paymentDues || []).filter(d =>
 
   } catch (error) {
     console.error(error);
-    toast('Ödeme işlemi başarısız', 'no');
+    toast(L('paymentFailedErr'), 'no');
   }
 }
 
@@ -2758,8 +3068,8 @@ const totalDebt = activeDues
   .reduce((sum, d) => sum + Number(d.remainingAmount || 0), 0);
 
   const debtBadge = totalDebt > 0
-    ? '<span class="bx bx-no">' + totalDebt.toFixed(0) + ' ₺ Borç</span>'
-    : '<span class="bx bx-ok">Borç Yok</span>';
+  ? '<span class="bx bx-no">' + totalDebt.toFixed(0) + ' ₺ ' + L('debt') + '</span>'
+  : '<span class="bx bx-ok">' + L('noDebt') + '</span>';
 
   return '<tr>' +
     '<td style="padding:12px;background:var(--bg3);border-radius:10px 0 0 10px;">' +
@@ -2777,7 +3087,7 @@ const totalDebt = activeDues
 
     '<td style="padding:12px;background:var(--bg3);border-radius:0 10px 10px 0;">' +
       '<button class="btn-no btn-s" onclick="askDeleteResident(' + r.id + ')">' +
-        '<i class="bi bi-trash"></i> Sil' +
+        '<i class="bi bi-trash"></i> ' + L('deleteBtn') +
       '</button>' +
     '</td>' +
 
@@ -2827,16 +3137,16 @@ const totalDebtAll = mySiteRes().reduce((sum, r) => {
 
   document.getElementById('residentsAdmin').innerHTML =
     '<div class="row g-3 mb-3">' +
-      '<div class="col-md-3 col-6"><div class="sc"><div class="sc-val" style="color:var(--ic);">' + mySiteRes().length + '</div><div class="sc-lbl">Toplam Sakin</div></div></div>' +
+      '<div class="col-md-3 col-6"><div class="sc"><div class="sc-val" style="color:var(--ic);">' + mySiteRes().length + '</div><div class="sc-lbl">' + L('totalRes') + '</div></div></div>' +
       '<div class="col-md-3 col-6"><div class="sc"><div class="sc-val" style="color:var(--ok);">' +
         fullPaidCount +
-      '</div><div class="sc-lbl">Tam Ödeyen</div></div></div>' +
+      '</div><div class="sc-lbl">' + L('fullPaid') + '</div></div></div>' +
       '<div class="col-md-3 col-6"><div class="sc"><div class="sc-val" style="color:var(--no);">' +
         debtResidentCount +
-      '</div><div class="sc-lbl">Borçlu Sakin</div></div></div>' +
+      '</div><div class="sc-lbl">' + L('debtResident') + '</div></div></div>' +
       '<div class="col-md-3 col-6"><div class="sc"><div class="sc-val" style="color:var(--warn);">' +
         totalDebtAll.toFixed(0) + ' ₺' +
-      '</div><div class="sc-lbl">Toplam Borç</div></div></div>' +
+      '</div><div class="sc-lbl">' + L('totalDebtPlain') + '</div></div></div>' +
     '</div>' +
 
     '<div class="gc mb-3">' +
@@ -2846,13 +3156,13 @@ const totalDebtAll = mySiteRes().reduce((sum, r) => {
     '<div class="gc" style="overflow-x:auto;">' +
       '<table style="width:100%;border-collapse:separate;border-spacing:0 4px;">' +
         '<thead><tr>' +
-          '<th style="color:var(--t3);font-size:10px;text-transform:uppercase;padding:4px 12px;text-align:left;">Sakin</th>' +
-          '<th style="color:var(--t3);font-size:10px;text-transform:uppercase;padding:4px 12px;">Daire</th>' +
-          '<th style="color:var(--t3);font-size:10px;text-transform:uppercase;padding:4px 12px;">Borç</th>' +
-          '<th style="color:var(--t3);font-size:10px;text-transform:uppercase;padding:4px 12px;">İşlem</th>' +
+          '<th style="color:var(--t3);font-size:10px;text-transform:uppercase;padding:4px 12px;text-align:left;">' + L('residentLbl') + '</th>' +
+'<th style="color:var(--t3);font-size:10px;text-transform:uppercase;padding:4px 12px;">' + L('apartment') + '</th>' +
+'<th style="color:var(--t3);font-size:10px;text-transform:uppercase;padding:4px 12px;">' + L('debt') + '</th>' +
+'<th style="color:var(--t3);font-size:10px;text-transform:uppercase;padding:4px 12px;">' + L('action') + '</th>' +
         '</tr></thead>' +
         '<tbody>' +
-          (rows || '<tr><td colspan="4" style="padding:16px;text-align:center;color:var(--t3);background:var(--bg3);border-radius:10px;">Sonuç bulunamadı</td></tr>') +
+          (rows || '<tr><td colspan="4" style="padding:16px;text-align:center;color:var(--t3);background:var(--bg3);border-radius:10px;">' + L('noResult') + '</td></tr>') +
         '</tbody>' +
       '</table>' +
     '</div>';
