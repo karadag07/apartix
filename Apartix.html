@@ -565,6 +565,11 @@ select.fi option{background:var(--bg3);}
     </div>
 
     <div class="fg">
+  <label class="fl">DAİRE NO</label>
+  <input class="fi" type="text" id="fpApartmentNo" placeholder="Örn: 18A">
+</div>
+
+    <div class="fg">
       <label class="fl">YENİ ŞİFRE</label>
       <input class="fi" type="password" id="fpNewPass">
     </div>
@@ -1106,13 +1111,13 @@ async function changePassword() {
   document.getElementById('newPass2').value = '';
 }
 
-
 async function forgotPassword() {
   const email = document.getElementById('fpEmail').value.trim();
+  const apartmentNo = document.getElementById('fpApartmentNo').value.trim();
   const newPassword = document.getElementById('fpNewPass').value;
   const newPassword2 = document.getElementById('fpNewPass2').value;
 
-  if (!email || !newPassword || !newPassword2) {
+  if (!email || !apartmentNo || !newPassword || !newPassword2) {
     toast('Tüm alanları doldurun', 'no');
     return;
   }
@@ -1132,6 +1137,7 @@ async function forgotPassword() {
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
       email: email,
+      apartmentNo: apartmentNo,
       newPassword: newPassword
     })
   });
@@ -1144,6 +1150,7 @@ async function forgotPassword() {
   closeM('mForgotPass');
 
   document.getElementById('fpEmail').value = '';
+  document.getElementById('fpApartmentNo').value = '';
   document.getElementById('fpNewPass').value = '';
   document.getElementById('fpNewPass2').value = '';
 
