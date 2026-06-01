@@ -184,6 +184,10 @@ public ResponseEntity<?> forgotPassword(@RequestBody ChangePasswordRequest reque
     if (user == null) {
         return ResponseEntity.badRequest().body("Bu e-posta ile kullanıcı bulunamadı");
     }
+    if (user.getApartmentNo() == null ||
+        !user.getApartmentNo().equalsIgnoreCase(request.getApartmentNo())) {
+    return ResponseEntity.badRequest().body("E-posta veya daire no hatalı");
+}
 
     if (request.getNewPassword() == null || request.getNewPassword().length() < 6) {
         return ResponseEntity.badRequest().body("Yeni şifre en az 6 karakter olmalı");
