@@ -40,6 +40,44 @@ h1,h2,h3,h4,h5,h6{font-family:"Outfit",sans-serif;}
 .tb-btn:hover{border-color:var(--ia);color:var(--ia);}
 .tb-ico{padding:0 10px;}
 .lang-wrap{position:relative;}
+.aidat-month-grid{
+  display:grid;
+  grid-template-columns:repeat(12, 1fr);
+  gap:12px;
+}
+
+.aidat-month-card{
+  height:80px;
+  min-width:0;
+  padding:14px 6px;
+  border-radius:14px;
+  text-align:center;
+  font-family:"Outfit",sans-serif;
+  font-weight:800;
+  font-size:15px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+.aidat-month-card .mt-s{
+  font-size:10px;
+  margin-top:6px;
+  font-weight:700;
+}
+
+@media(max-width:1100px){
+  .aidat-month-grid{
+    grid-template-columns:repeat(6, 1fr);
+  }
+}
+
+@media(max-width:650px){
+  .aidat-month-grid{
+    grid-template-columns:repeat(3, 1fr);
+  }
+}
 .lang-dd{position:absolute;top:calc(100% + 8px);right:0;min-width:148px;background:var(--bg2);border:1px solid var(--b2);border-radius:14px;overflow:hidden;display:none;box-shadow:var(--sh);z-index:700;}
 .lang-dd.open{display:block;}
 .lang-opt{padding:10px 16px;font-size:13px;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .15s;}
@@ -445,7 +483,7 @@ select.fi option{background:var(--bg3);}
         <div class="col-md-4"><div class="sc"><div class="sc-ico" style="background:rgba(244,63,94,.11);"><i class="bi bi-x-circle" style="color:var(--no);font-size:20px;"></i></div><div class="sc-val" style="color:var(--no);" id="unpaidC">0</div><div class="sc-lbl" id="unpaidMLbl">Ödenmeyen Ay</div></div></div>
         <div class="col-md-4"><div class="sc"><div class="sc-ico" style="background:rgba(245,158,11,.11);"><i class="bi bi-currency-dollar" style="color:var(--warn);font-size:20px;"></i></div><div class="sc-val" style="color:var(--warn);" id="debtTot">0 ₺</div><div class="sc-lbl" id="debtTotLbl">Toplam Borç (Faizli)</div></div></div>
       </div>
-      <div class="gc mb-4"><div class="sec-t"><i class="bi bi-calendar3" style="color:var(--ia);"></i><span id="aidatYrTitle">2026 Yılı Aidat Durumu</span></div><div class="row g-2" id="aidatMonths"></div></div>
+      <div class="gc mb-4"><div class="sec-t"><i class="bi bi-calendar3" style="color:var(--ia);"></i><span id="aidatYrTitle">2026 Yılı Aidat Durumu</span></div><div id="aidatMonths" class="aidat-month-grid"></div></div>
       <div class="gc mb-4" id="debtBox" style="display:none;">
         <div class="d-flex justify-content-between align-items-center mb-3"><div class="sec-t" style="margin-bottom:0;"><i class="bi bi-receipt" style="color:var(--no);"></i><span id="debtDetailTitle"> Borç Detayı</span></div><span class="bx bx-no" id="debtAmt">0 ₺</span></div>
         <div id="debtBreak"></div>
@@ -776,6 +814,7 @@ faultDeleteErr:"Arıza silinemedi",
 voteSaveErr:"Oy kaydedilemedi",
 paymentFailedErr:"Ödeme işlemi başarısız",
 noPayableDebt:"Ödenecek borç bulunmuyor",
+action:"İşlem",
 months:[
 'Ocak','Şubat','Mart','Nisan',
 'Mayıs','Haziran','Temmuz','Ağustos',
@@ -785,6 +824,7 @@ months:[
 const EN = {
   tagline:"Apartment & Site Management Platform",
   loginTab:"Sign In", regTab:"Register",
+  action:"Action",
   roleAdmin:"Manager", roleRes:"Resident",
   emailLbl:"EMAIL", passLbl:"PASSWORD",
   loginBtn:"Sign In", regBtn:"Register",
@@ -928,6 +968,7 @@ const DE = {
   daireLbl:"WOHNUNGSNR.", nameLbl:"VOLLSTÄNDIGER NAME",
   logoutTxt:"Abmelden", sbTag:"Gebäudeverwaltung",
   noPayableDebt:"Keine zahlbare Schuld gefunden",
+  action:"Aktion",
   navDash:"Dashboard", navAnn:"Ankündigungen", navFault:"Störungsverwaltung",
   navFaultR:"Meine Störungen", navVote:"Verwalterwald",
   navAidat:"Gebühren", navAidatR:"Meine Gebühren", navSite:"Anlageverwaltung",
@@ -1062,6 +1103,7 @@ const AR = {
   logoutTxt:"تسجيل الخروج", sbTag:"إدارة المباني",
   navDash:"لوحة التحكم", navAnn:"الإعلانات", navFault:"إدارة الأعطال",
   navFaultR:"طلبات الأعطال", navVote:"انتخاب المدير",
+  action:"الإجراء",
   navAidat:"رسوم الصيانة", navAidatR:"رسومي", navSite:"إدارة المواقع",
   secAna:"الرئيسية", secYonetim:"الإدارة", secIslemler:"العمليات",
   eyeAnnA:"التواصل", titleAnnA:"إدارة الإعلانات", subAnnA:"نشر الإعلانات وإدارة التعليقات", newAnnBtn:"إعلان جديد",
@@ -1290,7 +1332,7 @@ function checkBanned(text) { const low = text.toLowerCase(); return BANNED_WORDS
 // ─────────────────────────────────────────────────────────────
 const FEE = 500;
 const DAILY_RATE = 0.01;
-const MONTHS = () => I18N[lang].months;
+const MONTHS = () => L('months');
 
 let sites = [];
 let nextSiteId = 2;
@@ -2094,25 +2136,28 @@ document.getElementById('dashCharts').innerHTML =
       ).join('') +
     '</div>' +
   '</div>';
-}
-function buildDashRes() {
+}function buildDashRes() {
   const s = mySite();
+
   document.getElementById('dashTitle').textContent = L('dashTitle');
-  document.getElementById('dashSub').textContent = L('welcome') + ', ' + CU.name + ' — ' + s.name + (CU.daire ? ' · ' + CU.daire : '');
+  document.getElementById('dashSub').textContent =
+    L('welcome') + ', ' + CU.name + ' — ' + s.name + (CU.daire ? ' · ' + CU.daire : '');
 
   const mf = faults.filter(f => f.userId === CU.id);
   const dues = window._backendDues || [];
-  const joinedMonth = CU.moveInMonth || 1;
-const currentMonth = new Date().getMonth() + 1;
+  const joinedMonth = Number(CU.moveInMonth || 1);
+  const currentMonth = new Date().getMonth() + 1;
 
-const responsibleDues = dues.filter(d =>
-  d.month >= joinedMonth && d.month <= currentMonth
-);
+  const responsibleDues = dues.filter(d =>
+    Number(d.month) >= joinedMonth && Number(d.month) <= currentMonth
+  );
 
   const paidDues = responsibleDues.filter(d => d.status === 'paid');
-const unpaidDues = responsibleDues.filter(d => d.status !== 'paid');
+  const unpaidDues = responsibleDues.filter(d => d.status !== 'paid');
 
-  const totalDebt = unpaidDues.reduce((sum, d) => sum + Number(d.remainingAmount || 0), 0);
+  const totalDebt = unpaidDues.reduce((sum, d) => {
+    return sum + Number(d.remainingAmount || 0);
+  }, 0);
 
   const stats = [
     {v: paidDues.length, l: L('paidMLbl'), c:'#10b981', bg:'rgba(16,185,129,.11)', ic:'bi-check-circle'},
@@ -2122,35 +2167,59 @@ const unpaidDues = responsibleDues.filter(d => d.status !== 'paid');
   ];
 
   document.getElementById('statCards').innerHTML = stats.map(s =>
-    '<div class="col-md-3 col-6"><div class="sc"><div class="sc-ico" style="background:' + s.bg + ';"><i class="bi ' + s.ic + '" style="color:' + s.c + ';font-size:20px;"></i></div>' +
-    '<div class="sc-val" style="color:' + s.c + ';">' + s.v + '</div><div class="sc-lbl">' + s.l + '</div></div></div>'
+    '<div class="col-md-3 col-6"><div class="sc">' +
+      '<div class="sc-ico" style="background:' + s.bg + ';">' +
+        '<i class="bi ' + s.ic + '" style="color:' + s.c + ';font-size:20px;"></i>' +
+      '</div>' +
+      '<div class="sc-val" style="color:' + s.c + ';">' + s.v + '</div>' +
+      '<div class="sc-lbl">' + s.l + '</div>' +
+    '</div></div>'
   ).join('');
 
   document.getElementById('dashCharts').innerHTML =
-    '<div class="col-12"><div class="gc"><div class="sec-t"><i class="bi bi-calendar-check" style="color:var(--ok);"></i>' + L('aidatOverview') + '</div>' +
-    '<div class="row g-2">' + MONTHS.map((m, i) => {
-  const monthNo = i + 1;
-  const currentMonth = new Date().getMonth() + 1;
+    '<div class="col-12">' +
+      '<div class="gc">' +
+        '<div class="sec-t">' +
+          '<i class="bi bi-calendar-check" style="color:var(--ok);"></i>' +
+          L('aidatOverview') +
+        '</div>' +
 
-  if (monthNo > currentMonth) {
-    return '<div class="col-md-1 col-3"><div class="mt" style="opacity:.45;background:rgba(107,114,128,.15);border:1px solid rgba(107,114,128,.2);color:#9ca3af;">' +
-      m.substring(0, 3) +
-      '<div class="mt-s">' + L('locked') + '</div>';
-  }
+        '<div class="aidat-month-grid">' +
+          MONTHS().map((m, i) => {
+            const monthNo = i + 1;
+            const due = dues.find(d => Number(d.month) === monthNo);
+            const paid = due && due.status === 'paid';
 
-  if (monthNo < joinedMonth) {
-    return '<div class="col-md-1 col-3"><div class="mt" style="background:rgba(107,114,128,.18);border:1px solid rgba(107,114,128,.25);color:#9ca3af;">' +
-      m.substring(0, 3) +
-      '<div class="mt-s">' + L('notResponsible') + '</div>';
-  }
+            if (monthNo > currentMonth) {
+              return `
+                <div class="aidat-month-card"
+                  style="opacity:.55;background:rgba(107,114,128,.15);border:1px solid rgba(107,114,128,.22);color:#9ca3af;">
+                  ${m.substring(0, 3)}
+                  <div class="mt-s">Henüz Gelmedi</div>
+                </div>
+              `;
+            }
 
-  const due = dues.find(d => d.month === monthNo);
-  const paid = due && due.status === 'paid';
+            if (monthNo < joinedMonth) {
+              return `
+                <div class="aidat-month-card"
+                  style="background:rgba(107,114,128,.18);border:1px solid rgba(107,114,128,.25);color:#9ca3af;">
+                  ${m.substring(0, 3)}
+                  <div class="mt-s">${L('notResponsible')}</div>
+                </div>
+              `;
+            }
 
-  return '<div class="col-md-1 col-3"><div class="mt ' + (paid ? 'mt-p' : 'mt-u') + '">' +
-    m.substring(0, 3) +
-    '<div class="mt-s">' + (paid ? '✓' : '✗') + '</div></div></div>';
-}).join('') + '</div></div></div>';
+            return `
+              <div class="aidat-month-card ${paid ? 'mt-p' : 'mt-u'}">
+                ${m.substring(0, 3)}
+                <div class="mt-s">${paid ? 'Ödendi' : 'Ödenmedi'}</div>
+              </div>
+            `;
+          }).join('') +
+        '</div>' +
+      '</div>' +
+    '</div>';
 
   document.getElementById('dashQuick').innerHTML =
     '<div class="col-md-6"><div class="gc"><div class="sec-t"><i class="bi bi-megaphone" style="color:var(--ib);"></i>' + L('recentAnn') + '</div>' +
@@ -2161,8 +2230,9 @@ const unpaidDues = responsibleDues.filter(d => d.status !== 'paid');
     '<div class="col-md-6"><div class="gc"><div class="sec-t"><i class="bi bi-tools" style="color:var(--no);"></i>' + L('myFaultsLbl') + '</div>' +
     (mf.length ? mf.slice(0, 4).map(f =>
       '<div style="display:flex;align-items:center;gap:9px;padding:11px 0;border-bottom:1px solid var(--b1);">' +
-      '<div style="flex:1;"><div style="font-size:13px;font-weight:600;">' + f.type + '</div><div style="font-size:11px;color:var(--t3);">' + f.date + '</div></div>' +
-      '<span class="bx ' + SB(f.status) + '">' + LS(f.status) + '</span></div>'
+        '<div style="flex:1;"><div style="font-size:13px;font-weight:600;">' + f.type + '</div><div style="font-size:11px;color:var(--t3);">' + f.date + '</div></div>' +
+        '<span class="bx ' + SB(f.status) + '">' + LS(f.status) + '</span>' +
+      '</div>'
     ).join('')
     : '<div style="color:var(--t3);font-size:13px;padding:8px 0;">' + L('noFaults') + '</div>') +
     '</div></div>';
@@ -2691,7 +2761,7 @@ function calcDebt(uid) {
       const interest=+(FEE*DAILY_RATE*daysLate).toFixed(2);
       const rowTotal=+(FEE+interest).toFixed(2);
       total+=rowTotal;
-      details.push({month:MONTHS[i],base:FEE,daysLate,interest:interest.toFixed(2),total:rowTotal.toFixed(2)});
+      details.push({month:MONTHS()[i],base:FEE,daysLate,interest:interest.toFixed(2),total:rowTotal.toFixed(2)});
     }
   }
   return {total:+total.toFixed(2),details};
@@ -2724,7 +2794,7 @@ const unpaidCount = responsibleDues.filter(d => d.status !== 'paid').length;
         .filter(d => d.status !== 'paid')
         .reduce((sum, d) => sum + Number(d.remainingAmount || 0), 0);
 
-      const cells = MONTHS.map((m, i) => {
+      const cells = MONTHS().map((m, i) => {
         const monthNo = i + 1;
 
         const currentMonth = new Date().getMonth() + 1;
@@ -2800,49 +2870,38 @@ const responsibleDues = dues.filter(d =>
   document.getElementById('unpaidC').textContent = unpaidDues.length;
   document.getElementById('debtTot').textContent = totalDebt.toFixed(0) + ' ₺';
 
-  document.getElementById('aidatMonths').innerHTML = MONTHS.map((m, i) => {
-    const currentMonth = new Date().getMonth() + 1;
-    const monthNo = i + 1;
+  document.getElementById('aidatMonths').innerHTML = MONTHS().map((m, i) => {
+  const monthNo = i + 1;
+  const due = dues.find(d => Number(d.month) === monthNo);
+  const paid = due && due.status === 'paid';
 
-    if (monthNo > currentMonth) {
-  return `
-    <div class="col-md-1 col-3">
-      <div class="mt"
-        style="
-          opacity:.45;
-          background:rgba(107,114,128,.15);
-          border:1px solid rgba(107,114,128,.2);
-        ">
+  if (monthNo > currentMonth) {
+    return `
+      <div class="aidat-month-card"
+        style="background:rgba(107,114,128,.15);border:1px solid rgba(107,114,128,.25);color:#9ca3af;opacity:.55;">
         ${m.substring(0,3)}
         <div class="mt-s">${L('notYet')}</div>
       </div>
-    </div>
-  `;
-}
+    `;
+  }
 
-    if (monthNo < joinedMonth) {
-      return `
-        <div class="col-md-1 col-3">
-          <div class="mt" style="background:rgba(107,114,128,.18);border:1px solid rgba(107,114,128,.25);color:#9ca3af;">
-            ${m.substring(0, 3)}
-            <div class="mt-s">${L('notResponsible')}</div>
-          </div>
-        </div>
-      `;
-    }
-
-    const due = dues.find(d => d.month === monthNo);
-    const paid = due && due.status === 'paid';
-
+  if (monthNo < joinedMonth) {
     return `
-      <div class="col-md-1 col-3">
-        <div class="mt ${paid ? 'mt-p' : 'mt-u'}">
-          ${m.substring(0, 3)}
-          <div class="mt-s">${paid ? L('paidLabel') : L('unpaidLabel')}</div>
-        </div>
+      <div class="aidat-month-card"
+        style="background:rgba(107,114,128,.18);border:1px solid rgba(107,114,128,.25);color:#9ca3af;">
+        ${m.substring(0,3)}
+        <div class="mt-s">${L('notResponsible')}</div>
       </div>
     `;
-  }).join('');
+  }
+
+  return `
+    <div class="aidat-month-card ${paid ? 'mt-p' : 'mt-u'}">
+      ${m.substring(0,3)}
+      <div class="mt-s">${paid ? L('paidLabel') : L('unpaidLabel')}</div>
+    </div>
+  `;
+}).join('');
 
   if (totalDebt > 0) {
     document.getElementById('debtBox').style.display = 'block';
@@ -2861,7 +2920,7 @@ const responsibleDues = dues.filter(d =>
       unpaidDues
         .sort((a, b) => a.month - b.month)
         .map(d => {
-          const monthName = MONTHS[d.month - 1];
+          const monthName = MONTHS()[d.month - 1];
           const amount = Number(d.amount || 0);
           const lateFee = Number(d.lateFee || 0);
           const remaining = Number(d.remainingAmount || 0);
@@ -2930,7 +2989,7 @@ function renderPaymentSelection() {
     '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;">' +
       payDues.map(d => {
         const selected = selectedIds.includes(d.id);
-        const monthName = MONTHS[d.month - 1];
+        const monthName = MONTHS()[d.month - 1];
 
         return '<div onclick="togglePayMonth(' + d.id + ')" ' +
           'style="' +
@@ -2953,7 +3012,7 @@ function renderPaymentSelection() {
     '</div>' +
 
     selectedDues.map(d => {
-      const monthName = MONTHS[d.month - 1];
+      const monthName = MONTHS()[d.month - 1];
       const amount = Number(d.amount || 0);
       const lateFee = Number(d.lateFee || 0);
       const totalRow = Number(d.remainingAmount || 0);
