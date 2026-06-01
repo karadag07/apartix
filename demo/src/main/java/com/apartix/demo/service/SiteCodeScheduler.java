@@ -16,7 +16,7 @@ public class SiteCodeScheduler {
         this.siteRepository = siteRepository;
     }
 
-    @Scheduled(fixedRate = 300000)
+    @Scheduled(fixedRate = 60000)
     public void updateJoinCodes() {
         for (Site site : siteRepository.findAll()) {
             String newCode = site.getName()
