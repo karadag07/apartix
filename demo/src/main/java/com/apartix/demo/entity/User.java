@@ -34,5 +34,5 @@ public class User {
     private Timestamp createdAt;
 
     @Column(name = "move_in_month")
-private Integer moveInMonth;
+    private Integer moveInMonth;
 }

@@ -26,5 +26,5 @@ public class Site {
     private Timestamp createdAt;
 
     @Column(name = "join_code")
-private String joinCode;
+    private String joinCode;
 }

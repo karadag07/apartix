@@ -26,7 +26,7 @@ public class DueController {
     }
 
     @PutMapping("/{id}/pay")
-public Due payDue(@PathVariable Integer id) {
+        public Due payDue(@PathVariable Integer id) {
 
     Due due = dueRepository.findById(id)
             .orElseThrow();
@@ -39,8 +39,8 @@ public Due payDue(@PathVariable Integer id) {
     return dueRepository.save(due);
 }
 
-@GetMapping("/site/{siteId}")
-public List<Due> getSiteDues(
+    @GetMapping("/site/{siteId}")
+    public List<Due> getSiteDues(
         @PathVariable Integer siteId) {
 
     return dueRepository

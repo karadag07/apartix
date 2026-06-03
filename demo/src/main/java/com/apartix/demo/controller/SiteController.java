@@ -22,7 +22,7 @@ public class SiteController {
         return siteRepository.findAll();
     }
     @GetMapping("/{id}")
-public Site getSite(@PathVariable Integer id) {
+    public Site getSite(@PathVariable Integer id) {
     return siteRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Site bulunamadı"));
 }

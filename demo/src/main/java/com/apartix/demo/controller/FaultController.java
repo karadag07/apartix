@@ -23,7 +23,7 @@ public class FaultController {
         return faultRepository.findBySiteIdOrderByCreatedAtDesc(siteId);
     }
     @PostMapping
-public Fault createFault(
+    public Fault createFault(
         @RequestBody CreateFaultRequest request) {
 
     Fault fault = new Fault();
@@ -41,8 +41,8 @@ public Fault createFault(
     return faultRepository.save(fault);
 }
 
-@PutMapping("/{id}/status")
-public Fault updateStatus(
+    @PutMapping("/{id}/status")
+    public Fault updateStatus(
         @PathVariable Integer id,
         @RequestParam String status) {
 
@@ -54,8 +54,8 @@ public Fault updateStatus(
     return faultRepository.save(fault);
 }
 
-@DeleteMapping("/{id}")
-public void deleteFault(@PathVariable Integer id) {
+    @DeleteMapping("/{id}")
+    public void deleteFault(@PathVariable Integer id) {
     faultRepository.deleteById(id);
 }
 }

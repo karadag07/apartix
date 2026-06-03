@@ -95,7 +95,7 @@ private final DueRepository dueRepository;
 
         User savedUser = userRepository.save(user);
 
-if ("resident".equals(savedUser.getRole())) {
+    if ("resident".equals(savedUser.getRole())) {
 
     int moveInMonth = savedUser.getMoveInMonth() != null
             ? savedUser.getMoveInMonth()
@@ -145,7 +145,7 @@ if ("resident".equals(savedUser.getRole())) {
 }
 }
 
-return savedUser;
+    return savedUser;
     }
 
     @DeleteMapping("/{id}")
@@ -154,7 +154,7 @@ return savedUser;
     }
 
     @PutMapping("/{id}/change-password")
-public ResponseEntity<?> changePassword(
+    public ResponseEntity<?> changePassword(
         @PathVariable Integer id,
         @RequestBody ChangePasswordRequest request
 ) {
@@ -175,8 +175,8 @@ public ResponseEntity<?> changePassword(
     return ResponseEntity.ok("Şifre başarıyla değiştirildi");
 }
 
-@PutMapping("/forgot-password")
-public ResponseEntity<?> forgotPassword(@RequestBody ChangePasswordRequest request) {
+    @PutMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ChangePasswordRequest request) {
 
     User user = userRepository.findByEmail(request.getEmail())
             .orElse(null);
